@@ -13,6 +13,8 @@
 
     <color name="tertiary">#304234</color>
     <color name="on_tertiary">#FFFFFF</color>
+    <color name="tertiary_container">#E2F1E4</color>
+    <color name="on_tertiary_container">#1B2C1F</color>
 
     <color name="background">#FFF8F5</color>
     <color name="on_background">#1E1B19</color>
