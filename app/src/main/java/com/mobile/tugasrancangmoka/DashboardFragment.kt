@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.mobile.tugasrancangmoka.R
 import com.mobile.tugasrancangmoka.adapter.StockAdapter
 import com.mobile.tugasrancangmoka.model.StockItem
 import com.mobile.tugasrancangmoka.model.StockStatus
