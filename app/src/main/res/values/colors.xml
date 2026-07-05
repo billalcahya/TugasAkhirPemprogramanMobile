@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- M3 Espresso Logic Color Palette -->
+    <color name="primary">#553722</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#6F4E37</color>
+    <color name="on_primary_container">#EEC1A4</color>
+
+    <color name="secondary">#775838</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#FFD5AD</color>
+    <color name="on_secondary_container">#7A5B3A</color>
+
+    <color name="tertiary">#304234</color>
+    <color name="on_tertiary">#FFFFFF</color>
+
+    <color name="background">#FFF8F5</color>
+    <color name="on_background">#1E1B19</color>
+
+    <color name="surface">#FFF8F5</color>
+    <color name="on_surface">#1E1B19</color>
+    <color name="surface_variant">#E9E1DD</color>
+    <color name="on_surface_variant">#50453E</color>
+
+    <color name="surface_container_low">#FAF2EE</color>
+    <color name="surface_container">#F4ECE9</color>
+    <color name="surface_container_high">#EEE7E3</color>
+
+    <color name="outline">#82746D</color>
+    <color name="outline_variant">#D4C3BA</color>
+
+    <color name="error">#BA1A1A</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="on_error_container">#93000A</color>
 </resources>

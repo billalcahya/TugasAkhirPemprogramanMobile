@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.TugasRancangMoka" parent="Base.Theme.TugasRancangMoka" />
+
+    <style name="cr16">
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>
