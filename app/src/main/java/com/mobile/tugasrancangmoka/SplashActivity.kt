@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.mobile.tugasrancangmoka.utils.SessionManager
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +22,13 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
-        // Navigate to LoginActivity after 3000ms (3 seconds)
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
+            // Cek token: udah login atau belum
+            val intent = if (SessionManager(this).isLoggedIn()) {
+                Intent(this, MainActivity::class.java)
+            } else {
+                Intent(this, LoginActivity::class.java)
+            }
             startActivity(intent)
             finish()
         }, 3000)
