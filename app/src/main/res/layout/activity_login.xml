@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".LoginActivity">
+    tools:context=".activity.LoginActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -209,6 +209,14 @@
                         android:textStyle="bold"
                         app:backgroundTint="@color/primary"
                         app:cornerRadius="999dp" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        style="?android:attr/progressBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"

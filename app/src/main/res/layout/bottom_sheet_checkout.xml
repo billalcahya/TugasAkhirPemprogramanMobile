@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/surface"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/outline_variant"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Checkout Details"
+            android:textColor="@color/primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Calculations -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subtotal"
+                android:textColor="@color/on_surface_variant"/>
+            <TextView
+                android:id="@+id/text_checkout_subtotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/on_surface"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Discount Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_discount"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Discount Amount (Rp)"
+            app:boxStrokeColor="@color/outline"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="@dimen/radius_md"
+            app:boxCornerRadiusTopEnd="@dimen/radius_md"
+            app:boxCornerRadiusBottomStart="@dimen/radius_md"
+            app:boxCornerRadiusBottomEnd="@dimen/radius_md">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_checkout_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Tax -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tax (11%)"
+                android:textColor="@color/on_surface_variant"/>
+            <TextView
+                android:id="@+id/text_checkout_tax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/on_surface"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/outline_variant"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Grand Total -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Payment"
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/text_checkout_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Payment Method -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Payment Method"
+            android:textColor="@color/on_surface"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/rg_payment_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_cash"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cash"
+                android:checked="true"/>
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_non_cash"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Non-Cash"/>
+        </RadioGroup>
+
+        <!-- Payment Amount Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_payment_amount"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Cash Received (Rp)"
+            app:boxStrokeColor="@color/outline"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="@dimen/radius_md"
+            app:boxCornerRadiusTopEnd="@dimen/radius_md"
+            app:boxCornerRadiusBottomStart="@dimen/radius_md"
+            app:boxCornerRadiusBottomEnd="@dimen/radius_md">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_payment_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Change Amount -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change"
+                android:textColor="@color/on_surface_variant"/>
+            <TextView
+                android:id="@+id/text_change_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/primary"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Pay Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit_payment"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:text="Process Transaction"
+            android:textColor="@color/on_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="999dp"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

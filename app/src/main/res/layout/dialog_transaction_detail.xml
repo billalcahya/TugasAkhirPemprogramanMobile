@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/text_detail_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TX-CODE"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/text_detail_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/text_detail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="Completed"
+            android:textColor="@color/on_primary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_status_completed"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Items purchased title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Purchased Items"
+            android:textColor="@color/on_surface"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Items Container -->
+        <LinearLayout
+            android:id="@+id/layout_detail_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/outline_variant"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Calculations -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Amount"
+                android:textColor="@color/on_surface_variant"/>
+            <TextView
+                android:id="@+id/text_detail_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/on_surface"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Discount"
+                android:textColor="@color/on_surface_variant"/>
+            <TextView
+                android:id="@+id/text_detail_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/error"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grand Total"
+                android:textColor="@color/on_surface"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/text_detail_grand_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Rp 0"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+
+        <!-- Void reason description (if voided) -->
+        <LinearLayout
+            android:id="@+id/layout_void_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Void Reason:"
+                android:textColor="@color/error"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/text_detail_void_reason"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Reason text"
+                android:textColor="@color/on_surface_variant"/>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_void_transaction"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Void Transaction"
+            android:textColor="@color/on_primary"
+            app:backgroundTint="@color/error"
+            app:cornerRadius="999dp"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
