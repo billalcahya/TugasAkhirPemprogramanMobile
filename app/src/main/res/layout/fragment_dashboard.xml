@@ -1,528 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_dashboard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".DashboardFragment">
 
-    <!-- ================================================================ -->
-    <!-- SCROLLABLE CONTENT (semua Section 1-5 ada di dalam sini)          -->
-    <!-- ================================================================ -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="24dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <!-- ============================================================ -->
-            <!-- SECTION 1: TOP BAR (hamburger, greeting, avatar)              -->
-            <!-- ============================================================ -->
+            <!-- Top bar: avatar, judul, notifikasi -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/icon_menu"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_menu"
-                app:tint="@color/on_surface"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@color/primary"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_person"
+                    app:shapeAppearanceOverlay="@style/CircleImage"
+                    app:tint="@color/on_primary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_app_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="center"
+                    android:text="SmartCafe POS"
+                    android:textColor="@color/on_background"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_avatar"
+                    app:layout_constraintEnd_toStartOf="@id/ib_notifications" />
+
+                <ImageView
+                    android:id="@+id/ib_notifications"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@string/notifikasi"
+                    android:src="@drawable/ic_notifications"
+                    app:tint="@color/primary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Sapaan & tanggal -->
+            <TextView
+                android:id="@+id/tv_greeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Selamat Pagi, Alex!"
+                android:textColor="@color/on_background"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/text_greeting"
-                android:layout_width="0dp"
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Hello, Barista"
-                android:textColor="@color/primary"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                app:layout_constraintTop_toTopOf="@id/icon_menu"
-                app:layout_constraintBottom_toBottomOf="@id/icon_menu"
-                app:layout_constraintStart_toEndOf="@id/icon_menu"
-                app:layout_constraintEnd_toStartOf="@id/image_avatar" />
+                android:layout_marginTop="2dp"
+                android:text="Rabu, 10 Juli 2025"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/image_avatar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
-                android:padding="8dp"
-                android:background="@color/surface_container_high"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_person"
-                app:tint="@color/on_surface_variant"
-                app:shapeAppearanceOverlay="@style/CircleImage"
-                app:layout_constraintTop_toTopOf="@id/icon_menu"
-                app:layout_constraintBottom_toBottomOf="@id/icon_menu"
-                app:layout_constraintEnd_toEndOf="parent" />
+            <!-- Metric cards: Pendapatan & TRX -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
-            <!-- ============================================================ -->
-            <!-- END SECTION 1                                                 -->
-            <!-- ============================================================ -->
+                <LinearLayout
+                    android:id="@+id/card_revenue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_gradient_revenue"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.03"
+                        android:text="PENDAPATAN HARI INI"
+                        android:textColor="@color/on_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-            <!-- ============================================================ -->
-            <!-- SECTION 2: REVENUE CARD                                       -->
-            <!-- ============================================================ -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
 
+                        <TextView
+                            android:id="@+id/tv_revenue_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Rp 1.25M"
+                            android:textColor="@color/on_primary"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_circle"
+                            android:padding="6dp"
+                            android:src="@drawable/ic_coin" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/card_trx"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_gradient_trx"
+                    android:elevation="4dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.03"
+                        android:text="TRX"
+                        android:textColor="@color/on_surface"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:id="@+id/tv_trx_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="23"
+                            android:textColor="@color/on_surface"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_circle"
+                            android:padding="6dp"
+                            android:src="@drawable/ic_receipt" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Chart penjualan 7 hari -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_revenue"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="16dp"
-                app:cardBackgroundColor="@color/primary"
-                app:cardCornerRadius="@dimen/radius_lg"
-                app:cardElevation="2dp"
-                app:layout_constraintTop_toBottomOf="@id/icon_menu"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="24dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/label_revenue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TODAY'S REVENUE"
-                        android:textColor="@color/on_primary_container"
-                        android:textSize="12sp"
-                        android:letterSpacing="0.08"
-                        android:fontFamily="sans-serif-medium"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:layout_marginBottom="12dp"
+                        android:text="Penjualan 7 Hari Terakhir"
+                        android:textColor="@color/on_background"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/text_revenue_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="$1,284.50"
-                        android:textColor="@color/on_primary"
-                        android:textSize="40sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/label_revenue"
-                        app:layout_constraintStart_toStartOf="parent" />
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chart_weekly_sales"
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp" />
 
-                    <ImageView
-                        android:id="@+id/icon_trending_up"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginTop="12dp"
-                        android:src="@drawable/ic_trending_up"
-                        app:tint="@color/on_primary_container"
-                        app:layout_constraintTop_toBottomOf="@id/text_revenue_amount"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <TextView
-                        android:id="@+id/text_revenue_growth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="+12% from yesterday"
-                        android:textColor="@color/on_primary_container"
-                        android:textSize="13sp"
-                        app:layout_constraintTop_toTopOf="@id/icon_trending_up"
-                        app:layout_constraintBottom_toBottomOf="@id/icon_trending_up"
-                        app:layout_constraintStart_toEndOf="@id/icon_trending_up" />
-
-                    <TextView
-                        android:id="@+id/badge_live_feed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_pill_translucent"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="6dp"
-                        android:text="Live Feed"
-                        android:textColor="@color/on_primary"
-                        android:textSize="12sp"
-                        android:fontFamily="sans-serif-medium"
-                        app:layout_constraintTop_toBottomOf="@id/icon_trending_up"
-                        app:layout_constraintEnd_toEndOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ============================================================ -->
-            <!-- END SECTION 2                                                 -->
-            <!-- ============================================================ -->
-
-
-            <!-- ============================================================ -->
-            <!-- SECTION 3: QUICK ACTIONS ROW                                  -->
-            <!-- ============================================================ -->
-
-            <LinearLayout
-                android:id="@+id/row_quick_actions"
-                android:layout_width="0dp"
+            <!-- Top produk terlaris -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                app:layout_constraintTop_toBottomOf="@id/card_revenue"
-                app:layout_constraintStart_toStartOf="@id/card_revenue"
-                app:layout_constraintEnd_toEndOf="@id/card_revenue">
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp">
 
-                <!-- Quick Action: New Order -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardBackgroundColor="@color/secondary_container"
-                    app:cardCornerRadius="@dimen/radius_lg"
-                    app:cardElevation="0dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="Top Produk Terlaris"
+                        android:textColor="@color/on_background"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_top_products"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingVertical="16dp">
+                        android:nestedScrollingEnabled="false"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/item_top_product" />
 
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:padding="8dp"
-                            android:background="@drawable/bg_circle"
-                            android:backgroundTint="@color/secondary"
-                            android:src="@drawable/ic_add"
-                            app:tint="@color/on_secondary" />
+                </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="New Order"
-                            android:textColor="@color/on_secondary_container"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+            <!-- Peringatan stok rendah -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_card_alert_border"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <!-- Quick Action: Stock In -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="6dp"
-                    app:cardBackgroundColor="@color/surface_container_high"
-                    app:cardCornerRadius="@dimen/radius_lg"
-                    app:cardElevation="0dp">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_warning" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingVertical="16dp">
+                        android:text="Peringatan Stok Rendah"
+                        android:textColor="@color/on_background"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:padding="8dp"
-                            android:background="@drawable/bg_circle"
-                            android:backgroundTint="@color/surface_container"
-                            android:src="@drawable/ic_inventory"
-                            app:tint="@color/on_surface_variant" />
+                </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Stock In"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
-
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Quick Action: Reports -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_stock_alerts"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardBackgroundColor="@color/surface_container_high"
-                    app:cardCornerRadius="@dimen/radius_lg"
-                    app:cardElevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingVertical="16dp">
-
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:padding="8dp"
-                            android:background="@drawable/bg_circle"
-                            android:backgroundTint="@color/surface_container"
-                            android:src="@drawable/ic_bar_chart"
-                            app:tint="@color/on_surface_variant" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Reports"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="13sp"
-                            android:fontFamily="sans-serif-medium" />
-
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/item_stock_watchlist" />
 
             </LinearLayout>
 
-            <!-- ============================================================ -->
-            <!-- END SECTION 3                                                 -->
-            <!-- ============================================================ -->
-
-
-            <!-- ============================================================ -->
-            <!-- SECTION 4: STATS ROW                                          -->
-            <!-- ============================================================ -->
-
-            <LinearLayout
-                android:id="@+id/row_stats"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                app:layout_constraintTop_toBottomOf="@id/row_quick_actions"
-                app:layout_constraintStart_toStartOf="@id/card_revenue"
-                app:layout_constraintEnd_toEndOf="@id/card_revenue">
-
-                <!-- Stat Card: Active Orders -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardBackgroundColor="@color/surface_container_low"
-                    app:cardCornerRadius="@dimen/radius_lg"
-                    app:cardElevation="1dp">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:id="@+id/icon_active"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:padding="6dp"
-                            android:background="@drawable/bg_circle"
-                            android:backgroundTint="@color/tertiary_container"
-                            android:src="@drawable/ic_cup"
-                            app:tint="@color/on_tertiary"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                        <TextView
-                            android:id="@+id/label_active"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Active"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="12sp"
-                            app:layout_constraintTop_toTopOf="@id/icon_active"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                        <TextView
-                            android:id="@+id/text_active_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="142"
-                            android:textColor="@color/on_surface"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/icon_active"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Orders Completed"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="12sp"
-                            app:layout_constraintTop_toBottomOf="@id/text_active_count"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Stat Card: Action Required -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    app:strokeWidth="0dp"
-                    app:cardElevation="0dp">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_card_alert_border">
-
-                        <TextView
-                            android:id="@+id/badge_action_required"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_pill_warning"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:paddingTop="4dp"
-                            android:paddingBottom="4dp"
-                            android:text="Action Required"
-                            android:textColor="@color/on_secondary_container"
-                            android:textSize="10sp"
-                            android:fontFamily="sans-serif-medium"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/icon_warning"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginStart="16dp"
-                            android:padding="6dp"
-                            android:background="@drawable/bg_circle"
-                            android:backgroundTint="@color/error_container"
-                            android:src="@drawable/ic_warning"
-                            app:tint="@color/error"
-                            app:layout_constraintTop_toBottomOf="@id/badge_action_required"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                        <TextView
-                            android:id="@+id/text_low_stock_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="12dp"
-                            android:text="3 Items"
-                            android:textColor="@color/secondary"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/icon_warning"
-                            app:layout_constraintStart_toStartOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginBottom="16dp"
-                            android:text="Running Low"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="12sp"
-                            app:layout_constraintTop_toBottomOf="@id/text_low_stock_count"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-            <!-- ============================================================ -->
-            <!-- END SECTION 4                                                 -->
-            <!-- ============================================================ -->
-
-
-            <!-- ============================================================ -->
-            <!-- SECTION 5: STOCK WATCHLIST (title + RecyclerView)             -->
-            <!-- ============================================================ -->
-
-            <TextView
-                android:id="@+id/text_watchlist_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:text="Stock Watchlist"
-                android:textColor="@color/on_surface"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/row_stats"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/text_view_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="View All"
-                android:textColor="@color/on_surface_variant"
-                android:textSize="13sp"
-                app:layout_constraintTop_toTopOf="@id/text_watchlist_title"
-                app:layout_constraintBottom_toBottomOf="@id/text_watchlist_title"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_stock_watchlist"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="16dp"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/text_watchlist_title"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:listitem="@layout/item_stock_watchlist"
-                tools:itemCount="3"
-                xmlns:tools="http://schemas.android.com/tools" />
-
-            <!-- ============================================================ -->
-            <!-- END SECTION 5                                                 -->
-            <!-- ============================================================ -->
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-    <!-- ================================================================ -->
-    <!-- END SCROLLABLE CONTENT                                            -->
-    <!-- ================================================================ -->
 
-
-    <!-- ================================================================ -->
-    <!-- FAB — melayang tetap di pojok kanan bawah, TIDAK ikut scroll      -->
-    <!-- ================================================================ -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
-        android:src="@drawable/ic_add"
-        app:tint="@color/on_primary"
-        app:backgroundTint="@color/primary"
-        app:shapeAppearanceOverlay="@style/FabRounded" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_coffee"
+        android:icon="@drawable/ic_dashboard"
         android:title="Dashboard" />
     <item
         android:id="@+id/navigation_pos"
-        android:icon="@drawable/ic_cup"
+        android:icon="@drawable/ic_pos"
         android:title="POS" />
     <item
         android:id="@+id/navigation_inventory"

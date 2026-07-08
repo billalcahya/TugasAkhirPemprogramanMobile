@@ -58,7 +58,7 @@ class DashboardFragment : Fragment() {
             )
         )
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_stock_watchlist)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_stock_alerts)
         recyclerView.adapter = StockAdapter(dummyStockItems)
     }
 }
