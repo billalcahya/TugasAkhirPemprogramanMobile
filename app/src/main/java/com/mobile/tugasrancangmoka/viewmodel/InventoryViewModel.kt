@@ -34,7 +34,7 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
             try {
                 val response = repository.getProducts(categoryId, search)
                 if (response.isSuccessful && response.body() != null) {
-                    _inventoryState.value = InventoryResult.Success(response.body()?.data.orEmpty())
+                    _inventoryState.value = InventoryResult.Success(response.body().orEmpty())
                 } else {
                     _inventoryState.value = InventoryResult.Error("Gagal memuat stok barang")
                 }

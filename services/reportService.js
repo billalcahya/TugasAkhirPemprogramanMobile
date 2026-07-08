@@ -2,8 +2,9 @@ const supabase = require('../config/supabase');
 
 const getDailyReport = async (dateStr) => {
   // dateStr format: YYYY-MM-DD
-  const startOfDay = `${dateStr}T00:00:00.000Z`;
-  const endOfDay = `${dateStr}T23:59:59.999Z`;
+  // Gunakan timezone offset WIB (+07:00) agar pencarian di database sesuai hari lokal
+  const startOfDay = `${dateStr}T00:00:00.000+07:00`;
+  const endOfDay = `${dateStr}T23:59:59.999+07:00`;
 
   // 1. Ambil semua transaksi sukses pada hari tersebut
   const { data: transactions, error: trxError } = await supabase
@@ -37,7 +38,7 @@ const getDailyReport = async (dateStr) => {
     }
   }
 
-  // 3. Kelompokkan pendapatan per jam untuk grafik tren
+  // 3. Kelompokkan pendapatan per jam untuk grafik tren (menyesuaikan ke WIB)
   const hourlyTrend = {};
   for (let h = 0; h < 24; h++) {
     const hourStr = String(h).padStart(2, '0') + ':00';
@@ -45,8 +46,10 @@ const getDailyReport = async (dateStr) => {
   }
 
   transactions.forEach(t => {
-    // Ambil jam dari created_at
-    const localHour = new Date(t.created_at).getUTCHours();
+    // Tambahkan 7 jam ke timestamp UTC agar terpetakan ke WIB
+    const utcDate = new Date(t.created_at);
+    const localDate = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+    const localHour = localDate.getUTCHours();
     const hourStr = String(localHour).padStart(2, '0') + ':00';
     if (hourlyTrend[hourStr] !== undefined) {
       hourlyTrend[hourStr] += t.grand_total;
@@ -71,8 +74,12 @@ const getDailyReport = async (dateStr) => {
 const getMonthlyReport = async (monthStr) => {
   // monthStr format: YYYY-MM
   const [year, month] = monthStr.split('-').map(Number);
-  const startOfMonth = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0)).toISOString();
-  const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999)).toISOString();
+  
+  // Tentukan batas awal dan akhir bulan di timezone WIB (+07:00)
+  const startOfMonth = `${monthStr}-01T00:00:00.000+07:00`;
+  
+  const lastDay = new Date(year, month, 0).getDate();
+  const endOfMonth = `${monthStr}-${String(lastDay).padStart(2, '0')}T23:59:59.999+07:00`;
 
   // 1. Ambil semua transaksi sukses pada bulan tersebut
   const { data: transactions, error: trxError } = await supabase
@@ -106,16 +113,18 @@ const getMonthlyReport = async (monthStr) => {
     }
   }
 
-  // 3. Kelompokkan pendapatan per tanggal untuk grafik tren
-  const daysInMonth = new Date(year, month, 0).getDate();
+  // 3. Kelompokkan pendapatan per tanggal untuk grafik tren (menyesuaikan ke WIB)
   const dailyTrend = {};
-  for (let d = 1; d <= daysInMonth; d++) {
+  for (let d = 1; d <= lastDay; d++) {
     const dateStr = `${monthStr}-${String(d).padStart(2, '0')}`;
     dailyTrend[dateStr] = 0;
   }
 
   transactions.forEach(t => {
-    const dateStr = new Date(t.created_at).toISOString().split('T')[0];
+    // Sesuaikan UTC timestamp ke WIB (+07:00) sebelum dipisah tanggalnya
+    const utcDate = new Date(t.created_at);
+    const localDate = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+    const dateStr = localDate.toISOString().split('T')[0];
     if (dailyTrend[dateStr] !== undefined) {
       dailyTrend[dateStr] += t.grand_total;
     }

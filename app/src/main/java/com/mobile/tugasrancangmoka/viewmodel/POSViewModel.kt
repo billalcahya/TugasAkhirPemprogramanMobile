@@ -30,7 +30,7 @@ class POSViewModel(private val productRepo: ProductRepo) : ViewModel() {
             try {
                 val response = productRepo.getProducts(categoryId, search)
                 if (response.isSuccessful && response.body() != null) {
-                    _productState.value = ProductResult.Success(response.body()?.data.orEmpty())
+                    _productState.value = ProductResult.Success(response.body().orEmpty())
                 } else {
                     _productState.value = ProductResult.Error("Gagal memuat produk")
                 }

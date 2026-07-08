@@ -1,12 +1,14 @@
 package com.mobile.tugasrancangmoka.api
 
 import com.mobile.tugasrancangmoka.model.Category
+import com.mobile.tugasrancangmoka.model.CategoryResponse
 import com.mobile.tugasrancangmoka.model.CheckoutRequest
 import com.mobile.tugasrancangmoka.model.CheckoutResponse
 import com.mobile.tugasrancangmoka.model.DashboardResponse
 import com.mobile.tugasrancangmoka.model.LoginRequest
 import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.model.Product
+import com.mobile.tugasrancangmoka.model.ProductResponse
 import com.mobile.tugasrancangmoka.model.ReportResponse
 import com.mobile.tugasrancangmoka.model.TransactionDetailResponse
 import com.mobile.tugasrancangmoka.model.TransactionResponse
@@ -26,13 +28,14 @@ interface ApiService {
     ): Response<LoginResponse>
 
     @GET("categories")
-    suspend fun getCategories(): Response<com.mobile.tugasrancangmoka.model.CategoryResponse>
+    suspend fun getCategories(): Response<List<Category>>
 
     @GET("products")
     suspend fun getProducts(
         @Query("category") categoryId: Int? = null,
         @Query("search") search: String? = null
-    ): Response<com.mobile.tugasrancangmoka.model.ProductResponse>
+    ): Response<List<Product>>
+
 
     @POST("transactions")
     suspend fun checkout(
