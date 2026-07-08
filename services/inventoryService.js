@@ -10,19 +10,34 @@ const getAllInventory = async () => {
   return data;
 };
 
-const updateStockManual = async (productId, current_stock) => {
-  // Update stok berdasarkan product_id (FR-05)
-  const { data, error } = await supabase
+const updateStockManual = async (idOrProductId, current_stock) => {
+  // Coba update berdasarkan primary key 'id' terlebih dahulu
+  let { data, error } = await supabase
     .from('inventory')
     .update({ 
       current_stock,
       updated_at: new Date()
     })
-    .eq('product_id', productId)
+    .eq('id', idOrProductId)
     .select()
     .single();
 
-  if (error) throw error;
+  // Jika error (misal id bukan UUID yang valid atau tidak cocok) atau data kosong, coba berdasarkan 'product_id'
+  if (error || !data) {
+    const { data: dataByProd, error: errorByProd } = await supabase
+      .from('inventory')
+      .update({ 
+        current_stock,
+        updated_at: new Date()
+      })
+      .eq('product_id', idOrProductId)
+      .select()
+      .single();
+
+    if (errorByProd) throw new Error('Data inventori tidak ditemukan berdasarkan ID maupun Product ID');
+    return dataByProd;
+  }
+
   return data;
 };
 

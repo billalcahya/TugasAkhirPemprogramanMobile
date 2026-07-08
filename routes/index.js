@@ -6,6 +6,8 @@ const productRoutes = require('./productRoutes');
 const inventoryRoutes = require('./inventoryRoutes');
 const transactionRoutes = require('./transactionRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
+const profileRoutes = require('./profileRoutes');
+const reportRoutes = require('./reportRoutes');
 
 // Gabungkan endpoint auth (Base URL menjadi /api/v1/auth)
 router.use('/auth', authRoutes);
@@ -14,5 +16,7 @@ router.use('/products', productRoutes);
 router.use('/inventory', inventoryRoutes);
 router.use('/transactions', transactionRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/profile', profileRoutes);
+router.use('/reports', reportRoutes);
 
 module.exports = router;

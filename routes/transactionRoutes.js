@@ -8,6 +8,6 @@ router.post('/', authMiddleware, transactionController.createTransaction);
 router.get('/', authMiddleware, transactionController.getHistory);
 router.get('/:id', authMiddleware, transactionController.getDetail);
 
-router.put('/:id/void', authMiddleware, transactionController.cancelTransaction);
+router.patch('/:id/void', authMiddleware, transactionController.cancelTransaction);
 
 module.exports = router;

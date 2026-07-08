@@ -15,7 +15,7 @@ const getInventory = async (req, res) => {
 
 const updateStock = async (req, res) => {
   try {
-    const { product_id } = req.params;
+    const { id } = req.params;
     const { current_stock } = req.body;
 
     if (current_stock === undefined || current_stock < 0) {
@@ -25,7 +25,7 @@ const updateStock = async (req, res) => {
       });
     }
 
-    const data = await inventoryService.updateStockManual(product_id, current_stock);
+    const data = await inventoryService.updateStockManual(id, current_stock);
     return res.status(200).json({
       status: "success",
       message: "Stok berhasil diperbarui secara manual",

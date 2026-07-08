@@ -23,9 +23,6 @@ const checkout = async (userId, transactionData) => {
         const product = products.find(p => p.id === item.productId);
         if (!product) throw new Error(`Produk dengan ID ${item.productId} tidak ditemukan`);
 
-        // Validasi kecukupan stok sesuai FR-05 / R-08
-        // const currentStock = product.inventory?.[0]?.current_stock || 0;
-
         let currentStock = 0;
         if (product.inventory) {
             if (Array.isArray(product.inventory)) {
@@ -55,7 +52,8 @@ const checkout = async (userId, transactionData) => {
         // Siapkan data untuk update stok inventori
         inventoryUpdates.push({
             product_id: product.id,
-            new_stock: currentStock - item.quantity
+            old_stock: currentStock,
+            quantity: item.quantity
         });
     }
 
@@ -66,52 +64,91 @@ const checkout = async (userId, transactionData) => {
         throw new Error('Nominal pembayaran kurang');
     }
 
-    // 3. Eksekusi ke Database Supabase
-    // Simpan data transaksi utama
-    const { data: transaction, error: trxError } = await supabase
-        .from('transactions')
-        .insert([{
-            transaction_code: transactionCode,
-            user_id: userId,
-            total_amount: totalAmount,
-            discount_amount: discountAmount || 0,
-            grand_total: grandTotal,
-            payment_method: paymentMethod,
-            payment_amount: paymentAmount,
-            change_amount: changeAmount,
-            status: 'completed'
-        }])
-        .select()
-        .single();
+    // TRACKING UNTUK ROLLBACK MANUAL
+    const successfullyUpdatedStocks = [];
+    let insertedTransactionId = null;
 
-    if (trxError) throw trxError;
+    try {
+        // Step 1: Update stok inventori satu per satu (secara kondisional)
+        for (const update of inventoryUpdates) {
+            const newStock = update.old_stock - update.quantity;
+            const { data: updatedInv, error: stockError } = await supabase
+                .from('inventory')
+                .update({ current_stock: newStock })
+                .eq('product_id', update.product_id)
+                .gte('current_stock', update.quantity) // Validasi agar tidak negatif / race condition
+                .select();
 
-    // Hubungkan id transaksi utama ke detail item
-    const finalDetails = detailInserts.map(detail => ({
-        ...detail,
-        transaction_id: transaction.id
-    }));
+            if (stockError || !updatedInv || updatedInv.length === 0) {
+                throw new Error(`Gagal mengupdate stok untuk produk ID ${update.product_id}. Stok tidak mencukupi.`);
+            }
 
-    // Simpan semua detail item transaksi
-    const { error: detailsError } = await supabase.from('transaction_details').insert(finalDetails);
-    if (detailsError) throw detailsError;
+            successfullyUpdatedStocks.push(update);
+        }
 
-    // Update stok satu per satu ke tabel inventory
-    for (const update of inventoryUpdates) {
-        const { error: stockError } = await supabase
-            .from('inventory')
-            .update({ current_stock: update.new_stock })
-            .eq('product_id', update.product_id);
+        // Step 2: Simpan data transaksi utama
+        const { data: transaction, error: trxError } = await supabase
+            .from('transactions')
+            .insert([{
+                transaction_code: transactionCode,
+                user_id: userId,
+                total_amount: totalAmount,
+                discount_amount: discountAmount || 0,
+                grand_total: grandTotal,
+                payment_method: paymentMethod,
+                payment_amount: paymentAmount,
+                change_amount: changeAmount,
+                status: 'completed'
+            }])
+            .select()
+            .single();
 
-        if (stockError) throw stockError;
+        if (trxError) throw trxError;
+        insertedTransactionId = transaction.id;
+
+        // Step 3: Hubungkan id transaksi utama ke detail item
+        const finalDetails = detailInserts.map(detail => ({
+            ...detail,
+            transaction_id: transaction.id
+        }));
+
+        // Simpan semua detail item transaksi
+        const { error: detailsError } = await supabase.from('transaction_details').insert(finalDetails);
+        if (detailsError) throw detailsError;
+
+        return {
+            transactionId: transaction.id,
+            transactionCode: transaction.transaction_code,
+            grandTotal: transaction.grand_total,
+            changeAmount: transaction.change_amount
+        };
+
+    } catch (error) {
+        console.error("TRANSAKSI GAGAL. MELAKUKAN ROLLBACK...", error.message);
+
+        // ROLLBACK STEP 2: Hapus data transaksi utama jika berhasil terbuat
+        if (insertedTransactionId) {
+            await supabase.from('transactions').delete().eq('id', insertedTransactionId);
+        }
+
+        // ROLLBACK STEP 1: Kembalikan stok inventori yang sudah terlanjur dipotong
+        for (const stock of successfullyUpdatedStocks) {
+            const { data: currentInv } = await supabase
+                .from('inventory')
+                .select('current_stock')
+                .eq('product_id', stock.product_id)
+                .single();
+
+            if (currentInv) {
+                await supabase
+                    .from('inventory')
+                    .update({ current_stock: currentInv.current_stock + stock.quantity })
+                    .eq('product_id', stock.product_id);
+            }
+        }
+
+        throw error;
     }
-
-    return {
-        transactionId: transaction.id,
-        transactionCode: transaction.transaction_code,
-        grandTotal: transaction.grand_total,
-        changeAmount: transaction.change_amount
-    };
 };
 
 const getTransactionHistory = async () => {
@@ -143,40 +180,97 @@ const voidTransaction = async (id, voidReason) => {
         .select('product_id, quantity')
         .eq('transaction_id', id);
 
-    if (detailsError || !details) throw new Error('Data transaksi tidak ditemukan');
+    if (detailsError || !details || details.length === 0) {
+        throw new Error('Data transaksi tidak ditemukan');
+    }
 
-    // 2. Update status transaksi menjadi 'voided' (UC-13)
-    const { data: transaction, error: trxError } = await supabase
+    // Pastikan transaksi belum di-void sebelumnya
+    const { data: currentTrx } = await supabase
         .from('transactions')
-        .update({
-            status: 'voided',
-            void_reason: voidReason
-        })
+        .select('status')
         .eq('id', id)
-        .select()
         .single();
 
-    if (trxError) throw trxError;
+    if (currentTrx && currentTrx.status === 'voided') {
+        throw new Error('Transaksi sudah dibatalkan sebelumnya');
+    }
 
-    // 3. Kembalikan stok produk ke tabel inventory karena transaksi dibatalkan
-    for (const item of details) {
-        // Ambil stok saat ini
-        const { data: inv } = await supabase
-            .from('inventory')
-            .select('current_stock')
-            .eq('product_id', item.product_id)
+    // TRACKING ROLLBACK UNTUK VOID
+    const successfullyRestoredStocks = [];
+    let isStatusUpdated = false;
+
+    try {
+        // Step 1: Update status transaksi menjadi 'voided' (UC-13)
+        const { data: transaction, error: trxError } = await supabase
+            .from('transactions')
+            .update({
+                status: 'voided',
+                void_reason: voidReason
+            })
+            .eq('id', id)
+            .select()
             .single();
 
-        if (inv) {
+        if (trxError) throw trxError;
+        isStatusUpdated = true;
+
+        // Step 2: Kembalikan stok produk ke tabel inventory karena transaksi dibatalkan
+        for (const item of details) {
+            // Ambil stok saat ini
+            const { data: inv, error: invError } = await supabase
+                .from('inventory')
+                .select('current_stock')
+                .eq('product_id', item.product_id)
+                .single();
+
+            if (invError || !inv) {
+                throw new Error(`Data inventori tidak ditemukan untuk produk ID ${item.product_id}`);
+            }
+
             const restoredStock = inv.current_stock + item.quantity;
-            await supabase
+            const { error: updateStockErr } = await supabase
                 .from('inventory')
                 .update({ current_stock: restoredStock })
                 .eq('product_id', item.product_id);
-        }
-    }
 
-    return transaction;
+            if (updateStockErr) throw updateStockErr;
+            successfullyRestoredStocks.push(item);
+        }
+
+        return transaction;
+
+    } catch (error) {
+        console.error("PEMBATALAN TRANSAKSI GAGAL. MELAKUKAN ROLLBACK...", error.message);
+
+        // ROLLBACK STEP 1: Kembalikan status transaksi menjadi completed
+        if (isStatusUpdated) {
+            await supabase
+                .from('transactions')
+                .update({
+                    status: 'completed',
+                    void_reason: null
+                })
+                .eq('id', id);
+        }
+
+        // ROLLBACK STEP 2: Kurangi stok kembali sebesar kuantiti detail
+        for (const rolled of successfullyRestoredStocks) {
+            const { data: inv } = await supabase
+                .from('inventory')
+                .select('current_stock')
+                .eq('product_id', rolled.product_id)
+                .single();
+
+            if (inv) {
+                await supabase
+                    .from('inventory')
+                    .update({ current_stock: inv.current_stock - rolled.quantity })
+                    .eq('product_id', rolled.product_id);
+            }
+        }
+
+        throw error;
+    }
 };
 
 // Jangan lupa daftarkan fungsi baru ini ke module.exports di bagian paling bawah file:
