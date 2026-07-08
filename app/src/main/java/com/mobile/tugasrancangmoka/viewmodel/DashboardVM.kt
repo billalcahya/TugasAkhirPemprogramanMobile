@@ -24,6 +24,9 @@ class DashboardVM(private val repository: DashboardRepo) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.getDashboardData()
+                android.util.Log.d("DashboardVM", "Response Code: ${response.code()}")
+                android.util.Log.d("DashboardVM", "Response Body: ${response.body()}")
+                android.util.Log.d("DashboardVM", "Response ErrorBody: ${response.errorBody()?.string()}")
                 if (response.isSuccessful && response.body() != null) {
                     _dashboardState.value = DashboardResult.Success(response.body()!!)
                 } else {

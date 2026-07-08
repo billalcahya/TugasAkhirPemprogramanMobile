@@ -60,6 +60,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.4.0")
+    implementation("androidx.sqlite:sqlite-ktx:2.4.0")
 
     // UI, Animation & Caching (Glide, Lottie)
     implementation("com.github.bumptech.glide:glide:5.0.7")
