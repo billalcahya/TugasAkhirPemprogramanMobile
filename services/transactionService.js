@@ -114,26 +114,46 @@ const checkout = async (userId, transactionData) => {
     };
 };
 
-const getTransactionHistory = async () => {
-    // Mengambil daftar semua transaksi (FR-08)
-    const { data, error } = await supabase
+const getTransactionHistory = async (status) => {
+    // Mengambil daftar semua transaksi (FR-08) dengan filter status opsional
+    let query = supabase
         .from('transactions')
         .select('*, users(full_name)')
         .order('created_at', { ascending: false });
+
+    if (status) {
+        query = query.eq('status', status);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
     return data;
 };
 
 const getTransactionDetail = async (id) => {
-    // Mengambil rincian item dari satu transaksi spesifik (UC-07)
-    const { data, error } = await supabase
+    // 1. Ambil data transaksi utama (header)
+    const { data: transaction, error: trxError } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (trxError) throw trxError;
+
+    // 2. Ambil data detail item transaksi
+    const { data: details, error: detailsError } = await supabase
         .from('transaction_details')
         .select('*')
         .eq('transaction_id', id);
 
-    if (error) throw error;
-    return data;
+    if (detailsError) throw detailsError;
+
+    // 3. Gabungkan menjadi satu struktur terpadu
+    return {
+        ...transaction,
+        items: details
+    };
 };
 
 const voidTransaction = async (id, voidReason) => {

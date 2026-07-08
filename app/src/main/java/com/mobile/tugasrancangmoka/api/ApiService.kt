@@ -26,13 +26,13 @@ interface ApiService {
     ): Response<LoginResponse>
 
     @GET("categories")
-    suspend fun getCategories(): Response<List<Category>>
+    suspend fun getCategories(): Response<com.mobile.tugasrancangmoka.model.CategoryResponse>
 
     @GET("products")
     suspend fun getProducts(
         @Query("category") categoryId: Int? = null,
         @Query("search") search: String? = null
-    ): Response<List<Product>>
+    ): Response<com.mobile.tugasrancangmoka.model.ProductResponse>
 
     @POST("transactions")
     suspend fun checkout(
@@ -43,7 +43,7 @@ interface ApiService {
     suspend fun updateStock(
         @Path("id") id: Int,
         @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
-    ): Response<Product>
+    ): Response<com.mobile.tugasrancangmoka.model.SingleProductResponse>
 
     // Tambahkan baris ini di dalam interface ApiService.kt
     @GET("transactions")

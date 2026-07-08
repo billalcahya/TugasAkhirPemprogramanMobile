@@ -33,7 +33,8 @@ const createTransaction = async (req, res) => {
 
 const getHistory = async (req, res) => {
     try {
-        const data = await transactionService.getTransactionHistory();
+        const { status } = req.query; // 'completed' atau 'voided' atau undefined
+        const data = await transactionService.getTransactionHistory(status);
         return res.status(200).json({
             status: "success",
             message: "Berhasil mengambil riwayat transaksi",

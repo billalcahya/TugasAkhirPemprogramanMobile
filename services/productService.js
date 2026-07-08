@@ -1,14 +1,47 @@
 const supabase = require('../config/supabase');
 
-const getAllProducts = async () => {
-  // Mengambil produk aktif beserta data kategori terkait (NFR-09)
-  const { data, error } = await supabase
+const getAllProducts = async (categoryId, search) => {
+  // Mengambil produk aktif beserta data kategori dan inventori terkait
+  let query = supabase
     .from('products')
-    .select('*, categories(name)')
+    .select('*, categories(name), inventory(current_stock)')
     .eq('is_active', true);
 
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
+  }
+
+  if (search) {
+    query = query.ilike('name', `%${search}%`);
+  }
+
+  const { data, error } = await query;
+
   if (error) throw error;
-  return data;
+
+  // Petakan hasil query agar field stock dan buy_price terisi dengan benar
+  return data.map(prod => {
+    let currentStock = 0;
+    if (prod.inventory) {
+      if (Array.isArray(prod.inventory)) {
+        currentStock = prod.inventory[0]?.current_stock || 0;
+      } else {
+        currentStock = prod.inventory.current_stock || 0;
+      }
+    }
+
+    return {
+      id: prod.id,
+      category_id: prod.category_id,
+      name: prod.name,
+      buy_price: prod.cost_price, // Map cost_price ke buy_price demi konsistensi FE
+      cost_price: prod.cost_price,
+      sell_price: prod.sell_price,
+      image_url: prod.image_url,
+      is_active: prod.is_active,
+      stock: currentStock
+    };
+  });
 };
 
 const createProduct = async (productData) => {
@@ -40,7 +73,52 @@ const createProduct = async (productData) => {
   return product;
 };
 
+const updateProductStock = async (productId, newStock) => {
+  // 1. Update stok di tabel inventory
+  const { error: updateError } = await supabase
+    .from('inventory')
+    .update({ 
+      current_stock: newStock,
+      updated_at: new Date()
+    })
+    .eq('product_id', productId);
+
+  if (updateError) throw updateError;
+
+  // 2. Ambil data produk terbaru beserta stok terupdate
+  const { data: prod, error: fetchError } = await supabase
+    .from('products')
+    .select('*, categories(name), inventory(current_stock)')
+    .eq('id', productId)
+    .single();
+
+  if (fetchError || !prod) throw new Error('Gagal mengambil data produk terupdate');
+
+  let currentStock = 0;
+  if (prod.inventory) {
+    if (Array.isArray(prod.inventory)) {
+      currentStock = prod.inventory[0]?.current_stock || 0;
+    } else {
+      currentStock = prod.inventory.current_stock || 0;
+    }
+  }
+
+  return {
+    id: prod.id,
+    category_id: prod.category_id,
+    name: prod.name,
+    buy_price: prod.cost_price,
+    cost_price: prod.cost_price,
+    sell_price: prod.sell_price,
+    image_url: prod.image_url,
+    is_active: prod.is_active,
+    stock: currentStock
+  };
+};
+
 module.exports = {
   getAllProducts,
-  createProduct
+  getAllProductsFiltered: getAllProducts, // Alias untuk kompatibilitas audit
+  createProduct,
+  updateProductStock
 };

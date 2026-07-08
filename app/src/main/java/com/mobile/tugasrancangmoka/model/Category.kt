@@ -8,3 +8,8 @@ data class Category(
     @SerializedName("color_hex") val colorHex: String,
     @SerializedName("is_active") val isActive: Boolean
 )
+
+data class CategoryResponse(
+    val status: String,
+    val data: List<Category>?
+)

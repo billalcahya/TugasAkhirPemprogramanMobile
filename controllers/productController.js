@@ -2,7 +2,8 @@ const productService = require('../services/productService');
 
 const getProducts = async (req, res) => {
   try {
-    const data = await productService.getAllProducts();
+    const { category, search } = req.query;
+    const data = await productService.getAllProducts(category, search);
     return res.status(200).json({
       status: "success",
       message: "Berhasil mengambil daftar produk",
@@ -37,7 +38,32 @@ const addProduct = async (req, res) => {
   }
 };
 
+const updateStock = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { stock } = req.body; // Menerima field 'stock' dari Android
+
+    if (stock === undefined || stock < 0) {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "Stok wajib diisi dan tidak boleh negatif" 
+      });
+    }
+
+    const updatedProduct = await productService.updateProductStock(id, stock);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Stok produk berhasil diperbarui",
+      data: updatedProduct
+    });
+  } catch (error) {
+    return res.status(400).json({ status: "error", message: error.message });
+  }
+};
+
 module.exports = {
   getProducts,
-  addProduct
+  addProduct,
+  updateStock
 };
