@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">TugasRancangMoka</string>
+    <string name="notifikasi">Notifikasi</string>
+    <string name="search_produk">Search</string>
+    <string name="tambah_ke_keranjang">Tambah ke keranjang</string>
+    <string name="kategori_semua">Semua</string>
+    <string name="kategori_minuman">Minuman</string>
+    <string name="kategori_makanan">Makanan</string>
+    <string name="kategori_snack">Snack</string>
+    <string name="checkout">CHECKOUT</string>
+    <string name="order_summary_title">Order Summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax</string>
+    <string name="grand_total">Grand Total</string>
+    <string name="tipe_pesanan">Tipe Pesanan</string>
+    <string name="dine_in">Dine In</string>
+    <string name="take_away">Take Away</string>
+    <string name="tunai">Tunai</string>
+    <string name="non_tunai">Non-Tunai</string>
+    <string name="nominal_diterima">Nominal Diterima (Rp)</string>
+    <string name="konfirmasi_bayar">KONFIRMASI BAYAR</string>
+    <string name="pembayaran_berhasil">Pembayaran Berhasil</string>
+    <string name="metode_bayar">Metode Bayar</string>
+    <string name="selesai">SELESAI</string>
 </resources>
