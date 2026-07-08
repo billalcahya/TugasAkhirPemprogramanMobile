@@ -32,14 +32,14 @@ const getAllProducts = async (categoryId, search) => {
 
     return {
       id: prod.id,
-      category_id: prod.category_id,
-      name: prod.name,
-      buy_price: prod.cost_price, // Map cost_price ke buy_price demi konsistensi FE
-      cost_price: prod.cost_price,
-      sell_price: prod.sell_price,
-      image_url: prod.image_url,
-      is_active: prod.is_active,
-      stock: currentStock
+      category_id: prod.category_id || 0,
+      name: prod.name || '',
+      buy_price: prod.cost_price || 0.0, // Map cost_price ke buy_price demi konsistensi FE
+      cost_price: prod.cost_price || 0.0,
+      sell_price: prod.sell_price || 0.0,
+      image_url: prod.image_url || null,
+      is_active: prod.is_active !== undefined && prod.is_active !== null ? prod.is_active : true,
+      stock: currentStock || 0
     };
   });
 };
@@ -105,14 +105,14 @@ const updateProductStock = async (productId, newStock) => {
 
   return {
     id: prod.id,
-    category_id: prod.category_id,
-    name: prod.name,
-    buy_price: prod.cost_price,
-    cost_price: prod.cost_price,
-    sell_price: prod.sell_price,
-    image_url: prod.image_url,
-    is_active: prod.is_active,
-    stock: currentStock
+    category_id: prod.category_id || 0,
+    name: prod.name || '',
+    buy_price: prod.cost_price || 0.0,
+    cost_price: prod.cost_price || 0.0,
+    sell_price: prod.sell_price || 0.0,
+    image_url: prod.image_url || null,
+    is_active: prod.is_active !== undefined && prod.is_active !== null ? prod.is_active : true,
+    stock: currentStock || 0
   };
 };
 
