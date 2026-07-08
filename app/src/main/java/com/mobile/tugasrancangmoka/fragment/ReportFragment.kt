@@ -120,14 +120,25 @@ class ReportFragment : Fragment() {
                 is ReportResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.cardChart.visibility = View.VISIBLE
-                    val reportData = result.response.data
-                    if (reportData != null) {
+
+                    val reportList = result.response.data
+                    if (!reportList.isNullOrEmpty()) {
+                        // 1. Akumulasikan total revenue dan gross profit dari list data laporan
+                        val totalRevenue = reportList.sumOf { it.totalRevenue }
+                        val grossProfit = reportList.sumOf { it.grossProfit }
+
                         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
                         formatter.maximumFractionDigits = 0
-                        binding.textReportRevenue.text = formatter.format(reportData.totalRevenue)
-                        binding.textReportMargin.text = formatter.format(reportData.grossProfit)
+                        binding.textReportRevenue.text = formatter.format(totalRevenue)
+                        binding.textReportMargin.text = formatter.format(grossProfit)
 
-                        setupChart(reportData.salesTrend)
+                        // 2. Generate tren data untuk grafik berdasarkan list laporan harian/bulanan
+                        setupChart(reportList)
+                    } else {
+                        // Handle jika list dari server kosong
+                        binding.textReportRevenue.text = "Rp0"
+                        binding.textReportMargin.text = "Rp0"
+                        binding.reportChart.clear()
                     }
                 }
                 is ReportResult.Error -> {
@@ -139,13 +150,20 @@ class ReportFragment : Fragment() {
         }
     }
 
-    private fun setupChart(salesTrend: List<com.mobile.tugasrancangmoka.model.SalesTrendData>) {
+    private fun setupChart(reportList: List<com.mobile.tugasrancangmoka.model.ReportData>) {
         val entries = ArrayList<Entry>()
         val labels = ArrayList<String>()
 
-        for ((index, trend) in salesTrend.withIndex()) {
-            entries.add(Entry(index.toFloat(), trend.revenue.toFloat()))
-            labels.add(trend.label)
+        // Mengisi grafik berdasarkan field 'date' jika harian, atau 'month' jika bulanan
+        for ((index, report) in reportList.withIndex()) {
+            entries.add(Entry(index.toFloat(), report.totalRevenue.toFloat()))
+
+            val label = if (isDailyMode) {
+                report.date ?: "-"
+            } else {
+                report.month ?: "-"
+            }
+            labels.add(label)
         }
 
         val dataSet = LineDataSet(entries, "Revenue Trend").apply {
@@ -186,7 +204,6 @@ class ReportFragment : Fragment() {
             invalidate()
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
