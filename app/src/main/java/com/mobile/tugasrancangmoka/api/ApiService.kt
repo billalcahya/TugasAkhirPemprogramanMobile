@@ -5,6 +5,7 @@ import com.mobile.tugasrancangmoka.model.CategoryResponse
 import com.mobile.tugasrancangmoka.model.CheckoutRequest
 import com.mobile.tugasrancangmoka.model.CheckoutResponse
 import com.mobile.tugasrancangmoka.model.DashboardResponse
+import com.mobile.tugasrancangmoka.model.InventoryResponse
 import com.mobile.tugasrancangmoka.model.LoginRequest
 import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.model.Product
@@ -48,7 +49,12 @@ interface ApiService {
         @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
     ): Response<com.mobile.tugasrancangmoka.model.SingleProductResponse>
 
-    // Tambahkan baris ini di dalam interface ApiService.kt
+    @GET("inventory")
+    suspend fun getInventory(
+        @Query("category") categoryId: Int? = null,
+        @Query("search") search: String? = null
+    ): Response<InventoryResponse>
+
     @GET("transactions")
     suspend fun getTransactions(
         @Query("status") status: String? = null

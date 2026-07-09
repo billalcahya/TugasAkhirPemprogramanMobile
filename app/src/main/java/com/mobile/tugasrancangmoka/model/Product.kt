@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Product(
     val id: Int,
     @SerializedName("category_id") val categoryId: Int,
-    val name: String,
+    val name: String, // Kembalikan ke String biasa
     @SerializedName("buy_price") val buyPrice: Double,
     @SerializedName("sell_price") val sellPrice: Double,
     @SerializedName("image_url") val imageUrl: String?,

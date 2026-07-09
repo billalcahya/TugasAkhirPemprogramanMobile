@@ -9,7 +9,7 @@ data class TransactionResponse(
 
 data class TransactionDetailResponse(
     val status: String,
-    val data: TransactionRecord?
+    val data: List<TransactionRecord>?
 )
 
 data class TransactionRecord(

@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mobile.tugasrancangmoka.model.InventoryItem
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.InventoryRepo
 import kotlinx.coroutines.launch
 
 sealed class InventoryResult {
     object Loading : InventoryResult()
-    data class Success(val products: List<Product>) : InventoryResult()
+    data class Success(val products: List<InventoryItem>) : InventoryResult()
     data class Error(val message: String) : InventoryResult()
 }
 
@@ -33,8 +34,11 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.getProducts(categoryId, search)
-                if (response.isSuccessful && response.body() != null) {
-                    _inventoryState.value = InventoryResult.Success(response.body().orEmpty())
+                val body = response.body()
+
+                // Mengambil data dari body.data (InventoryResponse)
+                if (response.isSuccessful && body != null && body.data != null) {
+                    _inventoryState.value = InventoryResult.Success(body.data)
                 } else {
                     _inventoryState.value = InventoryResult.Error("Gagal memuat stok barang")
                 }
@@ -51,12 +55,10 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                 val response = repository.updateStock(id, newStock)
                 if (response.isSuccessful && response.body()?.data != null) {
                     _updateStockState.value = UpdateStockResult.Success(response.body()?.data!!)
-                    // Refresh data
                     fetchStock()
                 } else {
-                    // Jika API updateStock gagal karena 404 (tidak didukung server backend mockup)
-                    // Maka kita buat fallback simulasi sukses lokal agar workflow testing tetap berjalan.
                     if (response.code() == 404) {
+                        // Kembali menggunakan konstruktor string biasa karena model Product sudah kembali normal
                         _updateStockState.value = UpdateStockResult.Success(
                             Product(id, 1, "Simulated Update", 0.0, 0.0, null, true, newStock)
                         )
@@ -66,7 +68,6 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                // Fallback untuk offline/masalah jaringan, simulasi sukses lokal
                 _updateStockState.value = UpdateStockResult.Success(
                     Product(id, 1, "Simulated Update", 0.0, 0.0, null, true, newStock)
                 )

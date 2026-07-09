@@ -58,13 +58,16 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.getTransactionDetail(id)
-                if (response.isSuccessful && response.body()?.data != null) {
-                    _detailState.value = DetailResult.Success(response.body()!!.data!!)
+                val body = response.body()
+
+                if (response.isSuccessful && body != null && !body.data.isNullOrEmpty()) {
+                    val transactionRecord = body.data.first()
+                    _detailState.value = DetailResult.Success(transactionRecord)
                 } else {
                     _detailState.value = DetailResult.Error("Gagal memuat detail transaksi")
                 }
             } catch (e: Exception) {
-                _detailState.value = DetailResult.Error("Terjadi kesalahan jaringan")
+                _detailState.value = DetailResult.Error("Terjadi kesalahan jaringan: ${e.message}")
             }
         }
     }
@@ -76,7 +79,6 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
                 val response = repository.voidTransaction(id, reason)
                 if (response.isSuccessful) {
                     _voidState.value = VoidResult.Success
-                    // Refresh data setelah berhasil di-void
                     fetchTransactionDetail(id)
                 } else {
                     _voidState.value = VoidResult.Error("Gagal membatalkan transaksi")

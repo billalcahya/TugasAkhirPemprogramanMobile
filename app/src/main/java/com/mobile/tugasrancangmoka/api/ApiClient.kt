@@ -9,8 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "http://10.0.2.2:3000/api/v1/"
-        //"https://smartcafe-api.vercel.app/api/v1/"
+    private const val BASE_URL = "https://pemprograman-mobile-be.vercel.app/api/v1/"
 
     private var apiService: ApiService? = null
 

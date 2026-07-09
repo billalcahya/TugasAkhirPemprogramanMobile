@@ -20,14 +20,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.mobile.tugasrancangmoka.R
 import com.mobile.tugasrancangmoka.api.ApiClient
 import com.mobile.tugasrancangmoka.databinding.FragmentInventoryBinding
-import com.mobile.tugasrancangmoka.model.Product
+import com.mobile.tugasrancangmoka.model.InventoryItem
 import com.mobile.tugasrancangmoka.repository.InventoryRepo
 import com.mobile.tugasrancangmoka.viewmodel.InventoryResult
 import com.mobile.tugasrancangmoka.viewmodel.InventoryViewModel
 import com.mobile.tugasrancangmoka.viewmodel.UpdateStockResult
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 
-class InventoryFragment : Fragment() {
+class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya, atau ganti InventoryFragment
 
     private var _binding: FragmentInventoryBinding? = null
     private val binding get() = _binding!!
@@ -88,8 +88,8 @@ class InventoryFragment : Fragment() {
                     } else {
                         binding.rvInventory.visibility = View.VISIBLE
                         binding.textEmptyState.visibility = View.GONE
-                        binding.rvInventory.adapter = InventoryAdapter(result.products) { product ->
-                            showUpdateStockDialog(product)
+                        binding.rvInventory.adapter = InventoryAdapter(result.products) { item ->
+                            showUpdateStockDialog(item)
                         }
                     }
                 }
@@ -122,7 +122,7 @@ class InventoryFragment : Fragment() {
         }
     }
 
-    private fun showUpdateStockDialog(product: Product) {
+    private fun showUpdateStockDialog(product: InventoryItem) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Update Stock: ${product.name}")
 
@@ -136,7 +136,8 @@ class InventoryFragment : Fragment() {
             val value = input.text.toString().trim()
             val newStock = value.toIntOrNull()
             if (newStock != null) {
-                viewModel.updateProductStock(product.id, newStock)
+                // Di backend menggunakan product_id sebagai relasi inventory
+                viewModel.updateProductStock(product.productId, newStock)
             } else {
                 Toast.makeText(requireContext(), "Invalid stock amount", Toast.LENGTH_SHORT).show()
             }
@@ -154,10 +155,10 @@ class InventoryFragment : Fragment() {
         _binding = null
     }
 
-    // Inner Adapter untuk Stock List
+    // Inner Adapter untuk Stock List dengan tipe InventoryItem
     private class InventoryAdapter(
-        private val list: List<Product>,
-        private val onUpdateClick: (Product) -> Unit
+        private val list: List<InventoryItem>,
+        private val onUpdateClick: (InventoryItem) -> Unit
     ) : RecyclerView.Adapter<InventoryAdapter.ViewHolder>() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -176,7 +177,7 @@ class InventoryFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = list[position]
             holder.textName.text = item.name
-            holder.textCategory.text = "Product ID: ${item.id}"
+            holder.textCategory.text = "Product ID: ${item.productId}"
             holder.textStock.text = "Stock: ${item.stock ?: 0}"
 
             holder.btnEdit.setOnClickListener {
