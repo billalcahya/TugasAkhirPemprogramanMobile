@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
-    private const val BASE_URL = "https://smartcafe-api.vercel.app/api/v1/"
+    private const val BASE_URL = "https://pemprograman-mobile-be.vercel.app/api/v1/"
 
     private var retrofit: Retrofit? = null
 
