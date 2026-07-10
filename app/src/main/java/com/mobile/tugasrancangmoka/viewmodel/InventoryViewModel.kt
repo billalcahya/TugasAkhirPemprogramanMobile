@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.tugasrancangmoka.model.InventoryItem
+import com.mobile.tugasrancangmoka.model.NestedProduct
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.InventoryRepo
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ sealed class InventoryResult {
 
 sealed class UpdateStockResult {
     object Loading : UpdateStockResult()
-    data class Success(val product: Product) : UpdateStockResult()
+    data class Success(val inventory: InventoryItem) : UpdateStockResult() // Ubah dari Product ke InventoryItem
     data class Error(val message: String) : UpdateStockResult()
 }
 
@@ -58,9 +59,18 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                     fetchStock()
                 } else {
                     if (response.code() == 404) {
-                        // Kembali menggunakan konstruktor string biasa karena model Product sudah kembali normal
+                        // Jika simulasi terpaksa dijalankan, buat objek berbasis InventoryItem
                         _updateStockState.value = UpdateStockResult.Success(
-                            Product(id, 1, "Simulated Update", 0.0, 0.0, null, true, newStock)
+                            InventoryItem(
+                                id = id,
+                                productId = id,
+                                buyPrice = 0.0,
+                                sellPrice = 0.0,
+                                imageUrl = null,
+                                isActive = true,
+                                stock = newStock,
+                                nestedProduct = NestedProduct(name = "Simulated")
+                            )
                         )
                         fetchStock()
                     } else {
@@ -68,10 +78,7 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                _updateStockState.value = UpdateStockResult.Success(
-                    Product(id, 1, "Simulated Update", 0.0, 0.0, null, true, newStock)
-                )
-                fetchStock()
+                _updateStockState.value = UpdateStockResult.Error("Kesalahan koneksi internet: ${e.message}")
             }
         }
     }

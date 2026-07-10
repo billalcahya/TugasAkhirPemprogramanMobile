@@ -12,7 +12,7 @@ class InventoryRepo(private val apiService: ApiService) {
         return apiService.getInventory(categoryId, search)
     }
 
-    suspend fun updateStock(id: Int, stock: Int): Response<com.mobile.tugasrancangmoka.model.SingleProductResponse> {
+    suspend fun updateStock(id: Int, stock: Int): Response<com.mobile.tugasrancangmoka.model.SingleInventoryResponse> {
         return apiService.updateStock(id, UpdateStockRequest(stock))
     }
 }

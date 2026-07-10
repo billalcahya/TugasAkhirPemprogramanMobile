@@ -32,6 +32,9 @@ class ViewModelFactory(private val repository: Any) : ViewModelProvider.Factory 
             modelClass.isAssignableFrom(InventoryViewModel::class.java) -> {
                 InventoryViewModel(repository as InventoryRepo) as T
             }
+            modelClass.isAssignableFrom(SettingsVM::class.java) -> {
+                SettingsVM(repository as CategoryRepo) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

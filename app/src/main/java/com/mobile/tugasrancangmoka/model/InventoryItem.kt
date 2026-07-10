@@ -24,3 +24,9 @@ data class InventoryItem(
 data class NestedProduct(
     val name: String
 )
+
+data class SingleInventoryResponse(
+    @SerializedName("status") val status: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("data") val data: InventoryItem // Berisi satu objek inventori yang diperbarui
+)

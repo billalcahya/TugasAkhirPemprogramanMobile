@@ -25,7 +25,8 @@ class CategoryVM(private val repository: CategoryRepo) : ViewModel() {
             try {
                 val response = repository.getCategories()
                 if (response.isSuccessful && response.body() != null) {
-                    _categoryState.value = CategoryResult.Success(response.body().orEmpty())
+                    // Langsung ambil response.body() tanpa memanggil .data
+                    _categoryState.value = CategoryResult.Success(response.body()!!)
                 } else {
                     _categoryState.value = CategoryResult.Error("Gagal mengambil data kategori")
                 }

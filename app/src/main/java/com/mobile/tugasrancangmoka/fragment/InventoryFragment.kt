@@ -27,7 +27,7 @@ import com.mobile.tugasrancangmoka.viewmodel.InventoryViewModel
 import com.mobile.tugasrancangmoka.viewmodel.UpdateStockResult
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 
-class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya, atau ganti InventoryFragment
+class InventoryFragment : Fragment() {
 
     private var _binding: FragmentInventoryBinding? = null
     private val binding get() = _binding!!
@@ -128,7 +128,7 @@ class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya
 
         val input = EditText(requireContext())
         input.inputType = InputType.TYPE_CLASS_NUMBER
-        input.setText((product.stock ?: 0).toString())
+        input.setText(product.stock.toString())
         input.selectAll()
         builder.setView(input)
 
@@ -136,8 +136,7 @@ class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya
             val value = input.text.toString().trim()
             val newStock = value.toIntOrNull()
             if (newStock != null) {
-                // Di backend menggunakan product_id sebagai relasi inventory
-                viewModel.updateProductStock(product.productId, newStock)
+                viewModel.updateProductStock(product.id, newStock) // Menggunakan inventory id primer untuk mencocokkan endpoint PUT /inventory/:id
             } else {
                 Toast.makeText(requireContext(), "Invalid stock amount", Toast.LENGTH_SHORT).show()
             }
@@ -155,7 +154,6 @@ class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya
         _binding = null
     }
 
-    // Inner Adapter untuk Stock List dengan tipe InventoryItem
     private class InventoryAdapter(
         private val list: List<InventoryItem>,
         private val onUpdateClick: (InventoryItem) -> Unit
@@ -178,7 +176,7 @@ class InventoryFragment : Fragment() { // Sesuai dengan penamaan Anda sebelumnya
             val item = list[position]
             holder.textName.text = item.name
             holder.textCategory.text = "Product ID: ${item.productId}"
-            holder.textStock.text = "Stock: ${item.stock ?: 0}"
+            holder.textStock.text = "Stock: ${item.stock}"
 
             holder.btnEdit.setOnClickListener {
                 onUpdateClick(item)

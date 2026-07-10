@@ -1,7 +1,10 @@
 package com.mobile.tugasrancangmoka.api
 
 import com.mobile.tugasrancangmoka.model.Category
+import com.mobile.tugasrancangmoka.model.CategoryAddResponse
+import com.mobile.tugasrancangmoka.model.CategoryRequest
 import com.mobile.tugasrancangmoka.model.CategoryResponse
+import com.mobile.tugasrancangmoka.model.CategoryListResponse
 import com.mobile.tugasrancangmoka.model.CheckoutRequest
 import com.mobile.tugasrancangmoka.model.CheckoutResponse
 import com.mobile.tugasrancangmoka.model.DashboardResponse
@@ -16,6 +19,7 @@ import com.mobile.tugasrancangmoka.model.TransactionResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -31,6 +35,22 @@ interface ApiService {
     @GET("categories")
     suspend fun getCategories(): Response<List<Category>>
 
+    @POST("categories")
+    suspend fun addCategory(
+        @Body request: CategoryRequest
+    ): Response<CategoryAddResponse>
+
+    @PUT("categories/{id}")
+    suspend fun updateCategory(
+        @Path("id") id: Int,
+        @Body request: CategoryRequest
+    ): Response<CategoryAddResponse>
+
+    @DELETE("categories/{id}")
+    suspend fun deleteCategory(
+        @Path("id") id: Int
+    ): Response<CategoryAddResponse>
+
     @GET("products")
     suspend fun getProducts(
         @Query("category") categoryId: Int? = null,
@@ -43,11 +63,11 @@ interface ApiService {
         @Body request: CheckoutRequest
     ): Response<CheckoutResponse>
 
-    @PUT("products/{id}/stock")
+    @PUT("inventory/{id}") // Diubah sesuai rute router.put('/:id') pada inventoryRoutes
     suspend fun updateStock(
         @Path("id") id: Int,
         @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
-    ): Response<com.mobile.tugasrancangmoka.model.SingleProductResponse>
+    ): Response<com.mobile.tugasrancangmoka.model.SingleInventoryResponse> // Mengembalikan SingleInventoryResponse atau sesuaikan dengan pembungkus object InventoryItem
 
     @GET("inventory")
     suspend fun getInventory(

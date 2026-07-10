@@ -9,7 +9,17 @@ data class Category(
     @SerializedName("is_active") val isActive: Boolean
 )
 
+data class CategoryRequest(
+    @SerializedName("name") val name: String
+)
+
 data class CategoryResponse(
-    val status: String,
-    val data: List<Category>?
+    @SerializedName("status") val status: String,
+    @SerializedName("message") val message: String
+)
+
+data class CategoryListResponse(
+    @SerializedName("status") val status: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("data") val data: List<Category>?
 )
