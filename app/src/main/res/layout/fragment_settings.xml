@@ -214,10 +214,69 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="4dp"-->
+<!--                    android:layout_marginBottom="8dp"-->
+<!--                    android:layout_columnWeight="1"-->
+<!--                    app:cardBackgroundColor="#FFFFFF"-->
+<!--                    app:cardCornerRadius="12dp"-->
+<!--                    app:strokeColor="#D4C3BA"-->
+<!--                    app:strokeWidth="1dp">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="vertical"-->
+<!--                        android:padding="12dp">-->
+
+<!--                        <RelativeLayout-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content">-->
+
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:text="Units"-->
+<!--                                android:textColor="#1E1B19"-->
+<!--                                android:textSize="16sp"-->
+<!--                                android:textStyle="bold" />-->
+
+<!--                            <ImageView-->
+<!--                                android:layout_width="20dp"-->
+<!--                                android:layout_height="20dp"-->
+<!--                                android:layout_alignParentEnd="true"-->
+<!--                                app:tint="#82746d" />-->
+<!--                        </RelativeLayout>-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginTop="4dp"-->
+<!--                            android:text="Grams, ML, Pcs, etc."-->
+<!--                            android:textColor="#50453E"-->
+<!--                            android:textSize="12sp" />-->
+
+<!--                        <com.google.android.material.button.MaterialButton-->
+<!--                            android:id="@+id/btnGridAddUnit"-->
+<!--                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="36dp"-->
+<!--                            android:layout_marginTop="12dp"-->
+<!--                            android:text="+ Add Unit"-->
+<!--                            android:textColor="#775838"-->
+<!--                            android:textSize="11sp"-->
+<!--                            app:cornerRadius="6dp"-->
+<!--                            app:strokeColor="#775838" />-->
+<!--                    </LinearLayout>-->
+<!--                </com.google.android.material.card.MaterialCardView>-->
+
+                <!-- Products Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_columnWeight="1"
                     app:cardBackgroundColor="#FFFFFF"
@@ -238,7 +297,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Units"
+                                android:text="Products"
                                 android:textColor="#1E1B19"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -254,21 +313,39 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Grams, ML, Pcs, etc."
+                            android:text="Add &amp; manage products"
                             android:textColor="#50453E"
                             android:textSize="12sp" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnGridAddUnit"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="36dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:text="+ Add Unit"
-                            android:textColor="#775838"
-                            android:textSize="11sp"
-                            app:cornerRadius="6dp"
-                            app:strokeColor="#775838" />
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnGridAddProduct"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:padding="0dp"
+                                android:text="Add"
+                                android:textColor="#7A5B3A"
+                                android:textSize="11sp"
+                                app:backgroundTint="#FFD5AD"
+                                app:cornerRadius="6dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnGridManageProduct"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:layout_marginStart="4dp"
+                                android:padding="0dp"
+                                android:text="0 Items"
+                                android:textColor="#50453E"
+                                android:textSize="11sp"
+                                app:backgroundTint="#EEE7E3"
+                                app:cornerRadius="6dp" />
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </GridLayout>

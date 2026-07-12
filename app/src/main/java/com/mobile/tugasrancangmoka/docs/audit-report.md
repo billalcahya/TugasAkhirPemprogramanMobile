@@ -35,3 +35,14 @@ Dokumen ini mencatat audit kode, bug yang ditemukan, perbaikan yang dilakukan, d
 *   **ViewBinding**: Seluruh fragment dan activity telah diverifikasi menggunakan ViewBinding secara aman dengan melakukan nullifikasi reference binding (`_binding = null`) di dalam `onDestroyView()` untuk mencegah memory leaks.
 *   **Repository & API**: Semua transaksi jaringan dilakukan melalui class Repository dan diekspos melalui LiveData di ViewModel, mematuhi standar arsitektur POS.
 *   **Resource Strings**: Rekomendasi di masa mendatang untuk memindahkan string teks statis (seperti toast dan dialog title) ke `strings.xml` guna mendukung lokalisasi bahasa.
+
+## Audit Ke-2: 12 Juli 2026
+
+### 1. Masalah Kompilasi & Bug yang Ditemukan (Sudah Diperbaiki)
+
+*   **Masalah**: Error unresolved reference `ActivityResultContracts` di `SettingsFragment.kt` (baris 34).
+    *   *Analisis*: Package `androidx.activity.result.contract.ActivityResultContracts` tidak diimpor.
+    *   *Perbaikan*: Menambahkan import `androidx.activity.result.contract.ActivityResultContracts`.
+*   **Masalah**: Error unresolved reference `UriToFileUtil` dan `addProductMultipart` di `SettingsVM.kt`.
+    *   *Analisis*: Fungsionalitas upload multipart merupakan draf yang tidak didukung oleh endpoint API backend (yang hanya menerima input JSON standar).
+    *   *Perbaikan*: Menghapus fungsi `addProductWithImage` dari `SettingsVM.kt` beserta import yang tidak digunakan, serta mengarahkan aksi CREATE produk di `SettingsFragment.kt` untuk menyimpan file gambar secara persisten di penyimpanan internal aplikasi dan mengirim path URI lokalnya sebagai field `image_url` melalui JSON API standar (`addProduct`).

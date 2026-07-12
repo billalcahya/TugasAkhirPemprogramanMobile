@@ -206,7 +206,7 @@ class MenuFragment : Fragment() {
 
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
             formatter.maximumFractionDigits = 0
-            holder.textPrice.text = formatter.format(item.sellPrice)
+            holder.textPrice.text = "${formatter.format(item.sellPrice)} / ${item.unit ?: "Pcs"}"
 
             if (!item.imageUrl.isNullOrEmpty()) {
                 Glide.with(holder.itemView.context)

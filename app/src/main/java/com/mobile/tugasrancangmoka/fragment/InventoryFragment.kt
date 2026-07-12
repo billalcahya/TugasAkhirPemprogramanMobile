@@ -176,7 +176,7 @@ class InventoryFragment : Fragment() {
             val item = list[position]
             holder.textName.text = item.name
             holder.textCategory.text = "Product ID: ${item.productId}"
-            holder.textStock.text = "Stock: ${item.stock}"
+            holder.textStock.text = "Stock: ${item.stock} ${item.unit.orEmpty()}".trim()
 
             holder.btnEdit.setOnClickListener {
                 onUpdateClick(item)

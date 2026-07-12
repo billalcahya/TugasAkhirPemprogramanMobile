@@ -4,6 +4,12 @@ Semua perubahan kode pada project SmartCafe POS Android dicatat dalam dokumen in
 
 ---
 
+## [1.0.1] - 2026-07-12
+
+### Fixed
+*   **SettingsFragment.kt**: Memperbaiki error kompilasi dengan mengimpor `ActivityResultContracts` dan mengarahkan penyimpanan gambar produk yang dipilih ke direktori penyimpanan internal aplikasi sebelum melakukan POST/PUT via JSON API.
+*   **SettingsVM.kt**: Memperbaiki error kompilasi dengan menghapus fungsi `addProductWithImage` multipart beserta dependensi unresolved reference (`UriToFileUtil` & `addProductMultipart`) yang tidak didukung backend API.
+
 ## [1.0.0] - 2026-07-05
 
 ### Added

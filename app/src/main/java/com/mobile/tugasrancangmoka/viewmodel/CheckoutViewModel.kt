@@ -33,7 +33,7 @@ class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
 
         // Konversi item keranjang lokal menjadi objek CheckoutItem API
         val checkoutItems = cartItems.map {
-            CheckoutItem(productId = it.product.id, quantity = it.quantity)
+            CheckoutItem(productId = it.product.id ?: 0, quantity = it.quantity)
         }
 
         val request = CheckoutRequest(

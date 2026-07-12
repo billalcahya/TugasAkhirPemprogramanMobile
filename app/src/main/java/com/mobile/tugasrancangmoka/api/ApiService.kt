@@ -14,15 +14,20 @@ import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.model.ProductResponse
 import com.mobile.tugasrancangmoka.model.ReportResponse
+import com.mobile.tugasrancangmoka.model.SingleProductResponse
 import com.mobile.tugasrancangmoka.model.TransactionDetailResponse
 import com.mobile.tugasrancangmoka.model.TransactionResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -53,9 +58,28 @@ interface ApiService {
 
     @GET("products")
     suspend fun getProducts(
-        @Query("category") categoryId: Int? = null,
-        @Query("search") search: String? = null
+        @Query("category_id") categoryId: Int?,
+        @Query("search") search: String?
     ): Response<List<Product>>
+
+    @POST("products")
+    suspend fun addProduct(@Body product: Product): Response<SingleProductResponse>
+
+    @Multipart
+    @POST("products")
+    suspend fun addProductMultipart(
+        @Part productData: MultipartBody.Part,
+        @Part productImage: MultipartBody.Part?
+    ): Response<SingleProductResponse>
+
+    @PUT("products/{id}")
+    suspend fun updateProduct(
+        @Path("id") id: Int,
+        @Body product: Product
+    ): Response<SingleProductResponse>
+
+    @DELETE("products/{id}")
+    suspend fun deleteProduct(@Path("id") id: Int): Response<SingleProductResponse>
 
 
     @POST("transactions")

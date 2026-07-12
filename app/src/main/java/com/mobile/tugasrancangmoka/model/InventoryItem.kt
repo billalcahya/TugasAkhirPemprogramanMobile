@@ -15,6 +15,7 @@ data class InventoryItem(
     @SerializedName("image_url") val imageUrl: String?,
     @SerializedName("is_active") val isActive: Boolean,
     @SerializedName("current_stock") val stock: Int, // Menangkap current_stock dari /inventory
+    val unit: String? = null,
     @SerializedName("products") val nestedProduct: NestedProduct?
 ) {
     val name: String

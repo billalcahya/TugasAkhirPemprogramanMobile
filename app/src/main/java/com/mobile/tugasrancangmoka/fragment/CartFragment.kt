@@ -123,7 +123,7 @@ class CartFragment : Fragment() {
             val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
             currencyFormatter.maximumFractionDigits = 0
 
-            holder.textPrice.text = currencyFormatter.format(item.product.sellPrice)
+            holder.textPrice.text = "${currencyFormatter.format(item.product.sellPrice)} / ${item.product.unit ?: "Pcs"}"
             holder.textQty.text = item.quantity.toString()
             holder.textSubtotal.text = currencyFormatter.format(item.subtotal)
 
