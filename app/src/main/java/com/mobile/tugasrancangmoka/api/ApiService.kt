@@ -17,6 +17,9 @@ import com.mobile.tugasrancangmoka.model.ReportResponse
 import com.mobile.tugasrancangmoka.model.SingleProductResponse
 import com.mobile.tugasrancangmoka.model.TransactionDetailResponse
 import com.mobile.tugasrancangmoka.model.TransactionResponse
+import com.mobile.tugasrancangmoka.model.User
+import com.mobile.tugasrancangmoka.model.UserListResponse
+import com.mobile.tugasrancangmoka.model.UserResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -127,4 +130,19 @@ interface ApiService {
     suspend fun getMonthlyReport(
         @Query("month") month: String // format: YYYY-MM
     ): Response<ReportResponse>
+
+    @GET("profile/all")
+    suspend fun getUsers(): Response<UserListResponse>
+
+    @POST("profile")
+    suspend fun addUser(@Body userData: Map<String, String>): Response<UserResponse>
+
+    @PUT("profile/{id}")
+    suspend fun updateUser(
+        @Path("id") id: Int,
+        @Body userData: Map<String, String>
+    ): Response<UserResponse>
+
+    @DELETE("profile/{id}")
+    suspend fun deleteUser(@Path("id") id: Int): Response<UserResponse>
 }

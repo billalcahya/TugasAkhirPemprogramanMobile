@@ -10,4 +10,8 @@
     <style name="cr16">
         <item name="cornerSize">16dp</item>
     </style>
+
+    <style name="CustomActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#E5CCA9</item> <!-- Ganti dengan hex cokelat pilihanmu -->
+    </style>
 </resources>

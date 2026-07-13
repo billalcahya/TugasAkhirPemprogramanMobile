@@ -5,46 +5,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F5">
+    android:background="@color/background">
 
+    <!-- AppBarLayout agar title "Settings" tetap statis di atas saat konten di-scroll -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFF8F5"
+        android:background="@color/background"
         app:elevation="0dp"
-        app:liftOnScroll="true">
+        app:liftOnScroll="false">
 
+        <!-- Toolbar disesuaikan dengan typography title fragment report (24sp, Bold, Color Primary) -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIconTint="#553722"
-            app:title="Settings"
-            app:titleTextColor="#553722" />
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/margin_mobile"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:textColor="@color/primary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="@dimen/margin_mobile"
+            android:paddingBottom="@dimen/margin_mobile">
 
+            <!-- Store Info Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_store_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#FAF2EE"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#D4C3BA"
-                app:strokeWidth="1dp">
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/surface_container_low"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:strokeWidth="0dp"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -55,7 +66,7 @@
                         android:id="@+id/iconStoreFrame"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        app:cardBackgroundColor="#553722"
+                        app:cardBackgroundColor="@color/primary"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="2dp">
 
@@ -64,7 +75,7 @@
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_coffee"
-                            app:tint="#FFFFFF" />
+                            app:tint="@android:color/white" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <LinearLayout
@@ -78,7 +89,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Central Cafe"
-                            android:textColor="#1E1B19"
+                            android:textColor="@color/on_surface"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -86,7 +97,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Store ID: ROAST-001 • v1.2.0"
-                            android:textColor="#50453E"
+                            android:textColor="@color/on_surface_variant"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -112,42 +123,41 @@
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Section Store Management -->
+            <TextView
+                android:id="@+id/label_store_management"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:letterSpacing="0.1"
-                    android:text="STORE MANAGEMENT"
-                    android:textColor="#553722"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="8dp"
+                android:letterSpacing="0.1"
+                android:text="STORE MANAGEMENT"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_store_info" />
 
             <GridLayout
+                android:id="@+id/grid_management"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginTop="8dp"
                 android:alignmentMode="alignBounds"
                 android:columnCount="2"
-                android:columnOrderPreserved="false">
+                android:columnOrderPreserved="false"
+                app:layout_constraintTop_toBottomOf="@id/label_store_management">
 
+                <!-- Categories Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_columnWeight="1"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="12dp"
-                    app:strokeColor="#D4C3BA"
-                    app:strokeWidth="1dp">
+                    app:cardBackgroundColor="@color/surface_container"
+                    app:cardCornerRadius="@dimen/radius_lg"
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -163,7 +173,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Categories"
-                                android:textColor="#1E1B19"
+                                android:textColor="@color/on_surface"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -171,7 +181,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
-                                app:tint="#82746d" />
+                                app:tint="@color/on_surface_variant" />
                         </RelativeLayout>
 
                         <TextView
@@ -179,7 +189,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="Manage menu sections."
-                            android:textColor="#50453E"
+                            android:textColor="@color/on_surface_variant"
                             android:textSize="12sp" />
 
                         <LinearLayout
@@ -194,9 +204,9 @@
                                 android:layout_height="32dp"
                                 android:padding="0dp"
                                 android:text="Add"
-                                android:textColor="#7A5B3A"
+                                android:textColor="@color/primary"
                                 android:textSize="11sp"
-                                app:backgroundTint="#FFD5AD"
+                                app:backgroundTint="@color/surface_container_high"
                                 app:cornerRadius="6dp" />
 
                             <com.google.android.material.button.MaterialButton
@@ -206,83 +216,24 @@
                                 android:layout_marginStart="4dp"
                                 android:padding="0dp"
                                 android:text="12 Items"
-                                android:textColor="#50453E"
+                                android:textColor="@color/on_surface_variant"
                                 android:textSize="11sp"
-                                app:backgroundTint="#EEE7E3"
+                                app:backgroundTint="@color/surface_container_low"
                                 app:cornerRadius="6dp" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-<!--                <com.google.android.material.card.MaterialCardView-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:layout_marginBottom="8dp"-->
-<!--                    android:layout_columnWeight="1"-->
-<!--                    app:cardBackgroundColor="#FFFFFF"-->
-<!--                    app:cardCornerRadius="12dp"-->
-<!--                    app:strokeColor="#D4C3BA"-->
-<!--                    app:strokeWidth="1dp">-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:padding="12dp">-->
-
-<!--                        <RelativeLayout-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content">-->
-
-<!--                            <TextView-->
-<!--                                android:layout_width="wrap_content"-->
-<!--                                android:layout_height="wrap_content"-->
-<!--                                android:text="Units"-->
-<!--                                android:textColor="#1E1B19"-->
-<!--                                android:textSize="16sp"-->
-<!--                                android:textStyle="bold" />-->
-
-<!--                            <ImageView-->
-<!--                                android:layout_width="20dp"-->
-<!--                                android:layout_height="20dp"-->
-<!--                                android:layout_alignParentEnd="true"-->
-<!--                                app:tint="#82746d" />-->
-<!--                        </RelativeLayout>-->
-
-<!--                        <TextView-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginTop="4dp"-->
-<!--                            android:text="Grams, ML, Pcs, etc."-->
-<!--                            android:textColor="#50453E"-->
-<!--                            android:textSize="12sp" />-->
-
-<!--                        <com.google.android.material.button.MaterialButton-->
-<!--                            android:id="@+id/btnGridAddUnit"-->
-<!--                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="36dp"-->
-<!--                            android:layout_marginTop="12dp"-->
-<!--                            android:text="+ Add Unit"-->
-<!--                            android:textColor="#775838"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:cornerRadius="6dp"-->
-<!--                            app:strokeColor="#775838" />-->
-<!--                    </LinearLayout>-->
-<!--                </com.google.android.material.card.MaterialCardView>-->
-
                 <!-- Products Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginBottom="8dp"
                     android:layout_columnWeight="1"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="12dp"
-                    app:strokeColor="#D4C3BA"
-                    app:strokeWidth="1dp">
+                    app:cardBackgroundColor="@color/surface_container"
+                    app:cardCornerRadius="@dimen/radius_lg"
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -298,7 +249,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Products"
-                                android:textColor="#1E1B19"
+                                android:textColor="@color/on_surface"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -306,7 +257,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
-                                app:tint="#82746d" />
+                                app:tint="@color/on_surface_variant" />
                         </RelativeLayout>
 
                         <TextView
@@ -314,7 +265,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="Add &amp; manage products"
-                            android:textColor="#50453E"
+                            android:textColor="@color/on_surface_variant"
                             android:textSize="12sp" />
 
                         <LinearLayout
@@ -329,9 +280,9 @@
                                 android:layout_height="32dp"
                                 android:padding="0dp"
                                 android:text="Add"
-                                android:textColor="#7A5B3A"
+                                android:textColor="@color/primary"
                                 android:textSize="11sp"
-                                app:backgroundTint="#FFD5AD"
+                                app:backgroundTint="@color/surface_container_high"
                                 app:cornerRadius="6dp" />
 
                             <com.google.android.material.button.MaterialButton
@@ -341,47 +292,46 @@
                                 android:layout_marginStart="4dp"
                                 android:padding="0dp"
                                 android:text="0 Items"
-                                android:textColor="#50453E"
+                                android:textColor="@color/on_surface_variant"
                                 android:textSize="11sp"
-                                app:backgroundTint="#EEE7E3"
+                                app:backgroundTint="@color/surface_container_low"
                                 app:cornerRadius="6dp" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </GridLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Section User Management -->
+            <TextView
+                android:id="@+id/label_user_management"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:letterSpacing="0.1"
-                    android:text="USER MANAGEMENT"
-                    android:textColor="#553722"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:letterSpacing="0.1"
+                android:text="USER MANAGEMENT"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/grid_management" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_user_management"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:strokeColor="#D4C3BA"
-                app:strokeWidth="1dp">
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/surface_container"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:strokeWidth="0dp"
+                app:layout_constraintTop_toBottomOf="@id/label_user_management">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <!-- Header: Tetap dipertahankan agar tombol add berfungsi -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -398,7 +348,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Manage Users"
-                                android:textColor="#1E1B19"
+                                android:textColor="@color/on_surface"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -406,7 +356,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Define roles and access levels."
-                                android:textColor="#50453E"
+                                android:textColor="@color/on_surface_variant"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -416,175 +366,53 @@
                             android:layout_height="40dp"
                             android:layout_alignParentEnd="true"
                             android:text="+ Add User"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@android:color/white"
                             android:textSize="12sp"
-                            app:backgroundTint="#553722"
+                            app:backgroundTint="@color/primary"
                             app:cornerRadius="20dp" />
                     </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#D4C3BA" />
+                        android:background="@color/surface_container_high" />
 
-                    <RelativeLayout
+                    <!-- RECYCLERVIEW: Tempat menampung data user dinamis dari DB -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/avatar1Frame"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            app:cardBackgroundColor="#FFD5AD"
-                            app:cardCornerRadius="99dp"
-                            app:cardElevation="0dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="JD"
-                                android:textColor="#7A5B3A"
-                                android:textStyle="bold"/>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/avatar1Frame"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jane Doe"
-                                android:textColor="#1E1B19"
-                                android:textStyle="bold"/>
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                app:cardBackgroundColor="#EEE7E3"
-                                app:cardCornerRadius="4dp"
-                                app:cardElevation="0dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingHorizontal="6dp"
-                                    android:paddingVertical="1dp"
-                                    android:text="ADMIN"
-                                    android:textColor="#50453E"
-                                    android:textSize="9sp"
-                                    android:textStyle="bold"/>
-                            </com.google.android.material.card.MaterialCardView>
-                        </LinearLayout>
-
-                        <ImageButton
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            app:tint="#553722"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/avatar2Frame"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            app:cardBackgroundColor="#E9E1DD"
-                            app:cardCornerRadius="99dp"
-                            app:cardElevation="0dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="AS"
-                                android:textColor="#50453E"
-                                android:textStyle="bold"/>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/avatar2Frame"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Ahmad Sulaiman"
-                                android:textColor="#1E1B19"
-                                android:textStyle="bold"/>
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                app:cardBackgroundColor="#FAF2EE"
-                                app:cardCornerRadius="4dp"
-                                app:cardElevation="0dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:paddingHorizontal="6dp"
-                                    android:paddingVertical="1dp"
-                                    android:text="KASIR"
-                                    android:textColor="#50453E"
-                                    android:textSize="9sp"
-                                    android:textStyle="bold"/>
-                            </com.google.android.material.card.MaterialCardView>
-                        </LinearLayout>
-
-                        <ImageButton
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            app:tint="#553722"/>
-                    </RelativeLayout>
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/item_user" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Section Hardware -->
+            <TextView
+                android:id="@+id/label_hardware"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:letterSpacing="0.1"
-                    android:text="HARDWARE"
-                    android:textColor="#553722"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:letterSpacing="0.1"
+                android:text="HARDWARE"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_user_management" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_hardware"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:strokeColor="#D4C3BA"
-                app:strokeWidth="1dp">
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface_container"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:strokeWidth="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/label_hardware">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -600,17 +428,15 @@
                             android:id="@+id/printerIconFrame"
                             android:layout_width="44dp"
                             android:layout_height="44dp"
-                            app:cardBackgroundColor="#FAF2EE"
+                            app:cardBackgroundColor="@color/surface_container_low"
                             app:cardCornerRadius="8dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#D4C3BA"
-                            app:strokeWidth="1dp">
+                            app:cardElevation="0dp">
 
                             <ImageView
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
-                                app:tint="#553722"/>
+                                app:tint="@color/primary"/>
                         </com.google.android.material.card.MaterialCardView>
 
                         <LinearLayout
@@ -625,14 +451,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Receipt Printer"
-                                android:textColor="#1E1B19"
+                                android:textColor="@color/on_surface"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Epson TM-T88VI • Ethernet"
-                                android:textColor="#50453E"
+                                android:textColor="@color/on_surface_variant"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -643,9 +469,9 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:text="Test Print"
-                            android:textColor="#7A5B3A"
+                            android:textColor="@color/primary"
                             android:textSize="11sp"
-                            app:backgroundTint="#FFD5AD"
+                            app:backgroundTint="@color/surface_container_high"
                             app:cornerRadius="18dp" />
                     </RelativeLayout>
 
@@ -653,7 +479,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginVertical="12dp"
-                        android:background="#FAF2EE"/>
+                        android:background="@color/surface_container_low"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -670,7 +496,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:text="Auto-print receipts"
-                                android:textColor="#1E1B19"/>
+                                android:textColor="@color/on_surface"/>
 
                             <com.google.android.material.materialswitch.MaterialSwitch
                                 android:layout_width="wrap_content"
@@ -678,29 +504,12 @@
                                 android:layout_alignParentEnd="true"
                                 android:checked="true"
                                 app:thumbTint="@android:color/white"
-                                app:trackTint="#6F4E37"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:text="Print kitchen copy"
-                                android:textColor="#1E1B19"/>
-
-                            <com.google.android.material.materialswitch.MaterialSwitch
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:checked="false"/>
+                                app:trackTint="@color/primary"/>
                         </RelativeLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

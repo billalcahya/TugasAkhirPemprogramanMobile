@@ -34,7 +34,10 @@ class ViewModelFactory(private val repository: Any) : ViewModelProvider.Factory 
             }
             modelClass.isAssignableFrom(SettingsVM::class.java) -> {
                 val catRepo = repository as CategoryRepo
-                SettingsVM(catRepo, ProductRepo(catRepo.apiService)) as T
+                val apiService = catRepo.apiService
+                val prodRepo = ProductRepo(apiService)
+                val userRepo = UserRepo(apiService)
+                SettingsVM(catRepo, prodRepo, userRepo) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

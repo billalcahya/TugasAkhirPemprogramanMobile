@@ -9,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.mobile.tugasrancangmoka.model.Category
 import com.mobile.tugasrancangmoka.model.Product
+import com.mobile.tugasrancangmoka.model.User
 import com.mobile.tugasrancangmoka.repository.CategoryRepo
 import com.mobile.tugasrancangmoka.repository.ProductRepo
+import com.mobile.tugasrancangmoka.repository.UserRepo
 import com.mobile.tugasrancangmoka.utils.UriToFileUtil
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -24,7 +26,8 @@ data class UnitModel(
 
 class SettingsVM(
     private val categoryRepo: CategoryRepo,
-    private val productRepo: ProductRepo
+    private val productRepo: ProductRepo,
+    private val userRepo: UserRepo
 ) : ViewModel() {
 
     // --- STATE & LIVE DATA CATEGORIES ---
@@ -54,6 +57,12 @@ class SettingsVM(
     private val _productResult = MutableLiveData<String>()
     val productResult: LiveData<String> = _productResult
 
+    private val _userResult = MutableLiveData<String>()
+    val userResult: LiveData<String> = _userResult
+
+    private val _users = MutableLiveData<List<User>>()
+    val users: LiveData<List<User>> = _users
+
     // In-memory list for Units, initialized with common defaults
     private val unitList = mutableListOf(
         UnitModel(1, "pcs"),
@@ -66,8 +75,18 @@ class SettingsVM(
         _productResult.value = ""
     }
 
+    fun resetCategoryResult(){
+        _categoryResult.value = ""
+    }
+
+    fun resetUserResult(){
+        _userResult.value = ""
+    }
+
     init {
         fetchUnitsCount()
+        fetchCategoriesCount()
+        fetchUsers()
     }
 
     // ==========================================
@@ -282,6 +301,72 @@ class SettingsVM(
                 }
             } catch (e: Exception) {
                 _productResult.postValue("Error: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchUsers() {
+        viewModelScope.launch {
+            try {
+                val response = userRepo.getUsers()
+                if (response.isSuccessful && response.body() != null) {
+                    // Ambil property '.data' yang bertipe List<User> dari objek pembungkusnya
+                    val userListData = response.body()!!.data
+                    _users.postValue(userListData)
+                } else {
+                    _userResult.postValue("Gagal memuat user: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("DEBUG_MOKA", "Error fetch users: ${e.message}")
+                _userResult.postValue("Error Koneksi User: ${e.message}")
+            }
+        }
+    }
+
+    fun addUser(userMap: Map<String, String>) {
+        viewModelScope.launch {
+            try {
+                val response = userRepo.addUser(userMap)
+                if (response.isSuccessful) {
+                    _userResult.postValue("User berhasil ditambahkan!")
+                    fetchUsers()
+                } else {
+                    _userResult.postValue("Gagal menambah user: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _userResult.postValue("Error: ${e.message}")
+            }
+        }
+    }
+
+    fun updateUser(id: Int, userMap: Map<String, String>) {
+        viewModelScope.launch {
+            try {
+                val response = userRepo.updateUser(id, userMap)
+                if (response.isSuccessful) {
+                    _userResult.postValue("Data user berhasil diperbarui!")
+                    fetchUsers() // Refresh list user
+                } else {
+                    _userResult.postValue("Gagal memperbarui user: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _userResult.postValue("Error: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteUser(id: Int) {
+        viewModelScope.launch {
+            try {
+                val response = userRepo.deleteUser(id)
+                if (response.isSuccessful) {
+                    _userResult.postValue("User berhasil dihapus!")
+                    fetchUsers()
+                } else {
+                    _userResult.postValue("Gagal menghapus user: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _userResult.postValue("Error: ${e.message}")
             }
         }
     }
