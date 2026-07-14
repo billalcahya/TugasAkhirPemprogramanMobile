@@ -45,14 +45,16 @@ class DashboardFragment : Fragment() {
         val apiService = ApiClient.getApiService(requireContext())
         val repository = DashboardRepo(apiService)
         val factory = ViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory)[DashboardVM::class.java]
+        // Scope ke Activity agar data dashboard bertahan ketika berpindah tab
+        viewModel = ViewModelProvider(requireActivity(), factory)[DashboardVM::class.java]
 
         setupRecyclerViews()
         observeViewModel()
 
-
-
-        viewModel.fetchDashboard()
+        // Panggil API hanya jika data belum berhasil dimuat sebelumnya
+        if (viewModel.dashboardState.value !is DashboardResult.Success) {
+            viewModel.fetchDashboard()
+        }
     }
 
     private fun setupRecyclerViews() {

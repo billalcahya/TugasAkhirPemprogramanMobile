@@ -21,6 +21,7 @@ import com.mobile.tugasrancangmoka.databinding.DialogTransactionDetailBinding
 import com.mobile.tugasrancangmoka.databinding.FragmentHistoryBinding
 import com.mobile.tugasrancangmoka.model.TransactionRecord
 import com.mobile.tugasrancangmoka.repository.TransactionRepo
+import com.mobile.tugasrancangmoka.viewmodel.DashboardVM
 import com.mobile.tugasrancangmoka.viewmodel.DetailResult
 import com.mobile.tugasrancangmoka.viewmodel.HistoryResult
 import com.mobile.tugasrancangmoka.viewmodel.TransactionVM
@@ -105,13 +106,21 @@ class HistoryFragment : Fragment() {
                 }
                 is HistoryResult.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    if (result.list.isEmpty()) {
+                    
+                    // Lakukan filter lokal berdasarkan status transaksi yang dipilih
+                    val filteredList = if (currentFilter.isNullOrEmpty()) {
+                        result.list
+                    } else {
+                        result.list.filter { it.status.equals(currentFilter, ignoreCase = true) }
+                    }
+
+                    if (filteredList.isEmpty()) {
                         binding.rvHistory.visibility = View.GONE
                         binding.textEmptyState.visibility = View.VISIBLE
                     } else {
                         binding.rvHistory.visibility = View.VISIBLE
                         binding.textEmptyState.visibility = View.GONE
-                        binding.rvHistory.adapter = HistoryAdapter(result.list) { record ->
+                        binding.rvHistory.adapter = HistoryAdapter(filteredList) { record ->
                             viewModel.fetchTransactionDetail(record.id)
                         }
                     }
@@ -126,6 +135,7 @@ class HistoryFragment : Fragment() {
         }
 
         viewModel.detailState.observe(viewLifecycleOwner) { result ->
+            if (result == null) return@observe
             when (result) {
                 is DetailResult.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -133,15 +143,18 @@ class HistoryFragment : Fragment() {
                 is DetailResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     showTransactionDetailDialog(result.record)
+                    viewModel.clearDetailState()
                 }
                 is DetailResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    viewModel.clearDetailState()
                 }
             }
         }
 
         viewModel.voidState.observe(viewLifecycleOwner) { result ->
+            if (result == null) return@observe
             when (result) {
                 is VoidResult.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -150,10 +163,21 @@ class HistoryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Transaction voided successfully", Toast.LENGTH_SHORT).show()
                     viewModel.fetchTransactionHistory(currentFilter)
+                    
+                    // Refresh data dashboard agar data terbaru muncul
+                    try {
+                        val dashboardVM = ViewModelProvider(requireActivity())[DashboardVM::class.java]
+                        dashboardVM.fetchDashboard()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    viewModel.clearVoidState()
                 }
                 is VoidResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    viewModel.clearVoidState()
                 }
             }
         }

@@ -16,6 +16,7 @@ import com.mobile.tugasrancangmoka.databinding.BottomSheetCheckoutBinding
 import com.mobile.tugasrancangmoka.repository.TransactionRepo
 import com.mobile.tugasrancangmoka.viewmodel.CheckoutResult
 import com.mobile.tugasrancangmoka.viewmodel.CheckoutViewModel
+import com.mobile.tugasrancangmoka.viewmodel.DashboardVM
 import com.mobile.tugasrancangmoka.viewmodel.POSViewModel
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 import java.text.NumberFormat
@@ -141,6 +142,14 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
                     val currentCartItems = posViewModel.cartItems.value.orEmpty().toList()
                     posViewModel.clearCart()
                     
+                    // Refresh data dashboard agar data terbaru muncul
+                    try {
+                        val dashboardVM = ViewModelProvider(requireActivity())[DashboardVM::class.java]
+                        dashboardVM.fetchDashboard()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
                     val receiptDialog = ReceiptDialogFragment.newInstance(result.response, currentCartItems, paymentMethod, discount)
                     receiptDialog.show(parentFragmentManager, "ReceiptDialogFragment")
                     

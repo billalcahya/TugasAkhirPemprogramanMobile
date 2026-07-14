@@ -31,11 +31,11 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
     private val _historyState = MutableLiveData<HistoryResult>()
     val historyState: LiveData<HistoryResult> = _historyState
 
-    private val _detailState = MutableLiveData<DetailResult>()
-    val detailState: LiveData<DetailResult> = _detailState
+    private val _detailState = MutableLiveData<DetailResult?>()
+    val detailState: LiveData<DetailResult?> = _detailState
 
-    private val _voidState = MutableLiveData<VoidResult>()
-    val voidState: LiveData<VoidResult> = _voidState
+    private val _voidState = MutableLiveData<VoidResult?>()
+    val voidState: LiveData<VoidResult?> = _voidState
 
     fun fetchTransactionHistory(status: String? = null) {
         _historyState.value = HistoryResult.Loading
@@ -79,7 +79,6 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
                 val response = repository.voidTransaction(id, reason)
                 if (response.isSuccessful) {
                     _voidState.value = VoidResult.Success
-                    fetchTransactionDetail(id)
                 } else {
                     _voidState.value = VoidResult.Error("Gagal membatalkan transaksi")
                 }
@@ -87,5 +86,13 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
                 _voidState.value = VoidResult.Error("Koneksi gagal: ${e.message}")
             }
         }
+    }
+
+    fun clearDetailState() {
+        _detailState.value = null
+    }
+
+    fun clearVoidState() {
+        _voidState.value = null
     }
 }

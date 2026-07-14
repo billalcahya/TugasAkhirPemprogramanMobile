@@ -1,6 +1,12 @@
 package com.mobile.tugasrancangmoka.api.interceptor
 
 import android.content.Context
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import com.mobile.tugasrancangmoka.activity.LoginActivity
+import com.mobile.tugasrancangmoka.utils.SessionManager
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -15,6 +21,34 @@ class AuthInterceptor(private val context: Context) : Interceptor {
             requestBuilder.addHeader("Authorization", "Bearer $token")
         }
 
-        return chain.proceed(requestBuilder.build())
+        val response = chain.proceed(requestBuilder.build())
+
+        // Jika respons 401 Unauthorized (token kadaluarsa/tidak valid)
+        if (response.code == 401) {
+            val requestUrl = chain.request().url.toString()
+            // Hindari memproses response dari endpoint login sendiri
+            if (!requestUrl.contains("auth/login")) {
+                val sessionManager = SessionManager(context)
+                if (sessionManager.getToken() != null) {
+                    sessionManager.clearSession()
+
+                    // Jalankan di thread utama untuk interaksi UI (Toast & Start Activity)
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(
+                            context,
+                            "Sesi Anda telah berakhir, silakan login kembali.",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        val intent = Intent(context, LoginActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                        context.startActivity(intent)
+                    }
+                }
+            }
+        }
+
+        return response
     }
 }
