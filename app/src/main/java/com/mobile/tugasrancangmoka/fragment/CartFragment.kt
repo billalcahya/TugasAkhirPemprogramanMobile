@@ -72,7 +72,7 @@ class CartFragment : Fragment() {
             }
 
             // Update Total
-            val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+            val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
             formatter.maximumFractionDigits = 0
             binding.textTotalPrice.text = formatter.format(posViewModel.getTotalPayment())
         }
@@ -120,7 +120,7 @@ class CartFragment : Fragment() {
             val item = list[position]
             holder.textName.text = item.product.name
 
-            val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+            val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
             currencyFormatter.maximumFractionDigits = 0
 
             holder.textPrice.text = "${currencyFormatter.format(item.product.sellPrice)} / ${item.product.unit ?: "Pcs"}"

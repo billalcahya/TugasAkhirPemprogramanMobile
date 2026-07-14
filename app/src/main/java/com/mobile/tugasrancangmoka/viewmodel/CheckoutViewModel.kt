@@ -9,7 +9,6 @@ import com.mobile.tugasrancangmoka.model.CheckoutRequest
 import com.mobile.tugasrancangmoka.model.CheckoutResponse
 import com.mobile.tugasrancangmoka.repository.TransactionRepo
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 sealed class CheckoutResult {
     object Loading : CheckoutResult()

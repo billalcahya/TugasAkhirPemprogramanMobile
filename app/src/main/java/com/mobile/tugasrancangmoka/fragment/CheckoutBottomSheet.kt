@@ -81,7 +81,7 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
 
         change = (paymentAmount - grandTotal).coerceAtLeast(0.0)
 
-        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         formatter.maximumFractionDigits = 0
 
         binding.textCheckoutSubtotal.text = formatter.format(subtotal)

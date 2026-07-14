@@ -1,7 +1,6 @@
 package com.mobile.tugasrancangmoka.repository
 
 import com.mobile.tugasrancangmoka.api.ApiService
-import com.mobile.tugasrancangmoka.model.User
 import com.mobile.tugasrancangmoka.model.UserListResponse
 import com.mobile.tugasrancangmoka.model.UserResponse // Import class yang baru disatukan tadi
 import retrofit2.Response

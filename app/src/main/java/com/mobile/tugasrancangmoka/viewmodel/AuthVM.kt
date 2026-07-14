@@ -8,7 +8,6 @@ import com.mobile.tugasrancangmoka.model.LoginRequest
 import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.repository.AuthRepo
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 sealed class LoginResult {
     object Loading : LoginResult()

@@ -32,7 +32,6 @@ import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.CategoryRepo
 import com.mobile.tugasrancangmoka.utils.SessionManager
 import com.mobile.tugasrancangmoka.viewmodel.SettingsVM
-import com.mobile.tugasrancangmoka.viewmodel.UnitModel
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -877,7 +876,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         canvas.drawText("TEST KONEKSI PRINTER BERHASIL", 70f, 195f, paint)
 
         paint.typeface = Typeface.DEFAULT
-        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale("in", "ID"))
+        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.forLanguageTag("id-ID"))
         canvas.drawText("Waktu: ${sdf.format(Date())}", 50f, 240f, paint)
         canvas.drawText("Koneksi: Ethernet (Epson TM-T88VI)", 50f, 275f, paint)
         canvas.drawText("Status: Online & Ready", 50f, 310f, paint)

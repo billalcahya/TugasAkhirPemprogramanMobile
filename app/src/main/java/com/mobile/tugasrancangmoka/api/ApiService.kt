@@ -3,8 +3,6 @@ package com.mobile.tugasrancangmoka.api
 import com.mobile.tugasrancangmoka.model.Category
 import com.mobile.tugasrancangmoka.model.CategoryAddResponse
 import com.mobile.tugasrancangmoka.model.CategoryRequest
-import com.mobile.tugasrancangmoka.model.CategoryResponse
-import com.mobile.tugasrancangmoka.model.CategoryListResponse
 import com.mobile.tugasrancangmoka.model.CheckoutRequest
 import com.mobile.tugasrancangmoka.model.CheckoutResponse
 import com.mobile.tugasrancangmoka.model.DashboardResponse
@@ -12,17 +10,14 @@ import com.mobile.tugasrancangmoka.model.InventoryResponse
 import com.mobile.tugasrancangmoka.model.LoginRequest
 import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.model.Product
-import com.mobile.tugasrancangmoka.model.ProductResponse
 import com.mobile.tugasrancangmoka.model.ReportResponse
 import com.mobile.tugasrancangmoka.model.SingleProductResponse
 import com.mobile.tugasrancangmoka.model.TransactionDetailResponse
 import com.mobile.tugasrancangmoka.model.TransactionResponse
-import com.mobile.tugasrancangmoka.model.User
 import com.mobile.tugasrancangmoka.model.UserListResponse
 import com.mobile.tugasrancangmoka.model.UserResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
 import okhttp3.MultipartBody
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

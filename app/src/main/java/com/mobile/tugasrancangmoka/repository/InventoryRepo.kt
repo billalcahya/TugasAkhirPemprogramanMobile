@@ -2,8 +2,6 @@ package com.mobile.tugasrancangmoka.repository
 
 import com.mobile.tugasrancangmoka.api.ApiService
 import com.mobile.tugasrancangmoka.model.InventoryResponse
-import com.mobile.tugasrancangmoka.model.Product
-import com.mobile.tugasrancangmoka.model.ProductResponse
 import com.mobile.tugasrancangmoka.model.UpdateStockRequest
 import retrofit2.Response
 

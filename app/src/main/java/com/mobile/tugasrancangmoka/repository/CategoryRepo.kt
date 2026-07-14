@@ -4,8 +4,6 @@ import com.mobile.tugasrancangmoka.api.ApiService
 import com.mobile.tugasrancangmoka.model.Category
 import com.mobile.tugasrancangmoka.model.CategoryAddResponse
 import com.mobile.tugasrancangmoka.model.CategoryRequest
-import com.mobile.tugasrancangmoka.model.CategoryResponse
-import com.mobile.tugasrancangmoka.model.CategoryListResponse
 import retrofit2.Response
 
 class CategoryRepo(val apiService: ApiService) {

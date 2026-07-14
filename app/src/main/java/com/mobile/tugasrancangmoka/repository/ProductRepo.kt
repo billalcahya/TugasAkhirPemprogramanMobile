@@ -2,11 +2,9 @@ package com.mobile.tugasrancangmoka.repository
 
 import com.mobile.tugasrancangmoka.api.ApiService
 import com.mobile.tugasrancangmoka.model.Product
-import com.mobile.tugasrancangmoka.model.ProductResponse
 import com.mobile.tugasrancangmoka.model.SingleProductResponse
 import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Part
-import okhttp3.ResponseBody
 import retrofit2.Response
 
 class ProductRepo(private val apiService: ApiService) {

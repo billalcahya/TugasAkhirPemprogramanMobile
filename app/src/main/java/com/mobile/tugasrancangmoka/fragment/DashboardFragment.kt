@@ -20,9 +20,6 @@ import com.mobile.tugasrancangmoka.viewmodel.DashboardVM
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 import java.text.NumberFormat
 import java.util.Locale
-import android.content.Intent
-import com.mobile.tugasrancangmoka.activity.LoginActivity
-import com.mobile.tugasrancangmoka.utils.SessionManager
 
 class DashboardFragment : Fragment() {
 
@@ -73,7 +70,7 @@ class DashboardFragment : Fragment() {
                     val data = result.response.data
                     if (data != null) {
                         // Format currency
-                        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                        val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
                         formatter.maximumFractionDigits = 0
                         binding.textRevenueToday.text = formatter.format(data.totalRevenueToday)
                         binding.textTransactionsToday.text = data.totalTransactionsToday.toString()

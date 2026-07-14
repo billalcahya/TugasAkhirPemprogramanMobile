@@ -124,7 +124,7 @@ class ReportFragment : Fragment() {
                         val totalRevenue = reportList.sumOf { it.totalRevenue }
                         val grossProfit = reportList.sumOf { it.grossProfit }
 
-                        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                        val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
                         formatter.maximumFractionDigits = 0
                         binding.textReportRevenue.text = formatter.format(totalRevenue)
                         binding.textReportMargin.text = formatter.format(grossProfit)

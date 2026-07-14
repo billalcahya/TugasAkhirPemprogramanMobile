@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -202,7 +201,7 @@ class HistoryFragment : Fragment() {
         }
 
         // Format currencies
-        val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         currencyFormatter.maximumFractionDigits = 0
 
         dialogBinding.textDetailTotal.text = currencyFormatter.format(record.totalAmount)
@@ -307,7 +306,7 @@ class HistoryFragment : Fragment() {
                 holder.textDate.text = item.createdAt
             }
 
-            val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+            val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
             currencyFormatter.maximumFractionDigits = 0
             holder.textTotal.text = currencyFormatter.format(item.grandTotal)
 

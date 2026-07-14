@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobile.tugasrancangmoka.model.InventoryItem
 import com.mobile.tugasrancangmoka.model.NestedProduct
-import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.InventoryRepo
 import kotlinx.coroutines.launch
 

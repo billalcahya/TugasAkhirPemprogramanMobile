@@ -75,12 +75,12 @@ class ReceiptDialogFragment : DialogFragment() {
         val currentResponse = response ?: return
         val checkoutData = currentResponse.data ?: return
 
-        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         formatter.maximumFractionDigits = 0
 
         binding.txtReceiptCode.text = checkoutData.transactionCode
         
-        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale("in", "ID"))
+        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.forLanguageTag("id-ID"))
         binding.txtReceiptDate.text = sdf.format(Date())
 
         val prefs = requireContext().getSharedPreferences("smartcafe_prefs", Context.MODE_PRIVATE)

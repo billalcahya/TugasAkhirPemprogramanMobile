@@ -1,21 +1,43 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Retrofit and OkHttp Rules
+-keep class retrofit2.** { *; }
+-dontwarn retrofit2.**
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Gson Rules
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes *Annotation*
+-keep class com.google.gson.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep our domain / model classes intact for GSON deserialization
+-keep class com.mobile.tugasrancangmoka.model.** { *; }
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Glide Rules (Image caching & loading library)
+-keep public class * extends com.bumptech.glide.module.AppGlideModule {
+    public <init>();
+}
+-keep public class * extends com.bumptech.glide.module.LibraryGlideModule {
+    public <init>();
+}
+-keep class com.bumptech.glide.** { *; }
+-dontwarn com.bumptech.glide.**
+
+# Lottie Animation Rules
+-keep class com.airbnb.lottie.** { *; }
+
+# MPAndroidChart Rules
+-keep class com.github.mikephil.charting.** { *; }
+-dontwarn com.github.mikephil.charting.**
+
+# Strip Logcat calls in release builds for cleaner execution and security
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
+}

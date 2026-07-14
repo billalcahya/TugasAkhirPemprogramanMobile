@@ -196,7 +196,7 @@ class MenuFragment : Fragment() {
             val item = products[position]
             holder.textName.text = item.name
 
-            val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+            val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
             formatter.maximumFractionDigits = 0
             holder.textPrice.text = "${formatter.format(item.sellPrice)} / ${item.unit ?: "Pcs"}"
 

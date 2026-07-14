@@ -7,10 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
 import com.mobile.tugasrancangmoka.activity.MainActivity
-import com.mobile.tugasrancangmoka.R
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
