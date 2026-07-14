@@ -13,12 +13,9 @@ sealed class DashboardResult {
     data class Success(val response: DashboardResponse) : DashboardResult()
     data class Error(val message: String) : DashboardResult()
 }
-
 class DashboardVM(private val repository: DashboardRepo) : ViewModel() {
-
     private val _dashboardState = MutableLiveData<DashboardResult>()
     val dashboardState: LiveData<DashboardResult> = _dashboardState
-
     fun fetchDashboard() {
         _dashboardState.value = DashboardResult.Loading
         viewModelScope.launch {

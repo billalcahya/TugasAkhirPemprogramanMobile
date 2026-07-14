@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Payment Success Header Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/primary"
+            app:cardCornerRadius="@dimen/radius_lg"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_check_circle"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Pembayaran Berhasil!"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Transaksi telah dicatat ke sistem"
+                    android:textColor="#EEC1A4"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Printable Receipt Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_receipt_print_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Merchant Header -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="CENTRAL CAFE"
+                    android:textColor="#1E1B19"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Jl. Universitas No. 1, Salatiga"
+                    android:textColor="#50453E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Telp: (0298) 123456"
+                    android:textColor="#50453E"
+                    android:textSize="11sp" />
+
+                <!-- Divider -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:layerType="software"
+                    android:src="@drawable/dashed_line" />
+
+                <!-- Meta Info -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/label_receipt_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No. Transaksi:"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="TX-98402941" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal:"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        tools:text="13 Jul 2026 07:54" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kasir:"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_cashier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        tools:text="Admin" />
+                </RelativeLayout>
+
+                <!-- Divider -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:layerType="software"
+                    android:src="@drawable/dashed_line" />
+
+                <!-- Items Container -->
+                <LinearLayout
+                    android:id="@+id/layout_receipt_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!-- Divider -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:layerType="software"
+                    android:src="@drawable/dashed_line" />
+
+                <!-- Calculations -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Subtotal"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_subtotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        tools:text="Rp 45.000" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layout_receipt_discount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Diskon"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#BA1A1A"
+                        android:textSize="12sp"
+                        tools:text="-Rp 5.000" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pajak (11%)"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_tax"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        tools:text="Rp 4.400" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Akhir"
+                        android:textColor="#1E1B19"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_grand_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#553722"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Rp 44.400" />
+                </RelativeLayout>
+
+                <!-- Divider -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:layerType="software"
+                    android:src="@drawable/dashed_line" />
+
+                <!-- Payment Details -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Metode Pembayaran"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_payment_method"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="TUNAI" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layout_receipt_cash_received"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tunai Diterima"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_cash_received"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        tools:text="Rp 50.000" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layout_receipt_change"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kembalian"
+                        android:textColor="#50453E"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/txt_receipt_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="#1E1B19"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Rp 5.600" />
+                </RelativeLayout>
+
+                <!-- Divider -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:layerType="software"
+                    android:src="@drawable/dashed_line" />
+
+                <!-- Footer text -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Terima Kasih atas Kunjungan Anda!"
+                    android:textColor="#50453E"
+                    android:textSize="11sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:text="Layanan Konsumen: cs@centralcafe.com"
+                    android:textColor="#82746D"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Actions -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_print_receipt"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Cetak Nota"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_print"
+            app:iconGravity="textStart"
+            app:iconTint="@android:color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_done_receipt"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="Selesai"
+            android:textColor="@color/primary"
+            app:cornerRadius="24dp"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

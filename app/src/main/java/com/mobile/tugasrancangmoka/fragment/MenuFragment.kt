@@ -36,10 +36,8 @@ class MenuFragment : Fragment() {
 
     private var _binding: FragmentMenuBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var posViewModel: POSViewModel
     private lateinit var categoryViewModel: CategoryVM
-
     private var selectedCategoryId: Int? = null
     private var searchQuery: String? = null
 
@@ -57,8 +55,6 @@ class MenuFragment : Fragment() {
         val apiService = ApiClient.getApiService(requireContext())
         val productRepo = ProductRepo(apiService)
         val categoryRepo = CategoryRepo(apiService)
-
-        // POSViewModel di-scope ke Activity agar share cart data dengan CartFragment
         val posFactory = ViewModelFactory(productRepo)
         posViewModel = ViewModelProvider(requireActivity(), posFactory)[POSViewModel::class.java]
 
@@ -94,7 +90,6 @@ class MenuFragment : Fragment() {
             when (result) {
                 is CategoryResult.Loading -> {}
                 is CategoryResult.Success -> {
-                    // Masukkan kategori default "Semua Menu" di awal list
                     val fullList = mutableListOf(Category(0, "All Menu", "#FFFFFF", true))
                     fullList.addAll(result.categories)
                     binding.rvCategories.adapter = CategoryAdapter(fullList)
@@ -140,7 +135,6 @@ class MenuFragment : Fragment() {
         _binding = null
     }
 
-    // Inner Adapter untuk Category Chip
     private inner class CategoryAdapter(private val categories: List<Category>) :
         RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
@@ -159,7 +153,6 @@ class MenuFragment : Fragment() {
             val item = categories[position]
             holder.textName.text = item.name
 
-            // Logika seleksi chip
             val isSelected = (selectedCategoryId == null && item.id == 0) || (selectedCategoryId == item.id)
             if (isSelected) {
                 holder.cardChip.setCardBackgroundColor(requireContext().getColor(R.color.primary))
@@ -181,7 +174,6 @@ class MenuFragment : Fragment() {
         override fun getItemCount() = categories.size
     }
 
-    // Inner Adapter untuk Product Grid
     private class ProductAdapter(
         private val products: List<Product>,
         private val onProductClick: (Product) -> Unit

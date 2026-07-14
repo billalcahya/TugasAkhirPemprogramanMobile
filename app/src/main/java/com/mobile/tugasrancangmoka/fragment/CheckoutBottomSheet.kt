@@ -35,7 +35,7 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
     private var grandTotal = 0.0
     private var paymentAmount = 0.0
     private var change = 0.0
-    private var paymentMethod = "cash" // 'cash' atau 'non_cash'
+    private var paymentMethod = "cash"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,7 +80,6 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
 
         change = (paymentAmount - grandTotal).coerceAtLeast(0.0)
 
-        // Display formatted currencies
         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
         formatter.maximumFractionDigits = 0
 
@@ -89,12 +88,10 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
         binding.textCheckoutTotal.text = formatter.format(grandTotal)
         binding.textChangeAmount.text = formatter.format(change)
 
-        // Validate pay button
         binding.btnSubmitPayment.isEnabled = paymentMethod == "non_cash" || paymentAmount >= grandTotal
     }
 
     private fun setupListeners() {
-        // Discount Input
         binding.editCheckoutDiscount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -104,13 +101,11 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Payment Method Radio Group
         binding.rgPaymentMethod.setOnCheckedChangeListener { _, checkedId ->
             paymentMethod = if (checkedId == R.id.rb_cash) "cash" else "non_cash"
             calculateTotals()
         }
 
-        // Cash Received Input
         binding.editPaymentAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -119,7 +114,6 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Process Transaction Click
         binding.btnSubmitPayment.setOnClickListener {
             val cart = posViewModel.cartItems.value.orEmpty()
             if (cart.isEmpty()) return@setOnClickListener
@@ -143,7 +137,13 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
                 is CheckoutResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Transaction processed successfully!", Toast.LENGTH_SHORT).show()
+                    
+                    val currentCartItems = posViewModel.cartItems.value.orEmpty().toList()
                     posViewModel.clearCart()
+                    
+                    val receiptDialog = ReceiptDialogFragment.newInstance(result.response, currentCartItems, paymentMethod, discount)
+                    receiptDialog.show(parentFragmentManager, "ReceiptDialogFragment")
+                    
                     dismiss()
                 }
                 is CheckoutResult.Error -> {

@@ -18,11 +18,8 @@ sealed class CheckoutResult {
 }
 
 class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
-
     private val _checkoutState = MutableLiveData<CheckoutResult>()
     val checkoutState: LiveData<CheckoutResult> = _checkoutState
-
-    // Fungsi utama mengirim transaksi ke server backend
     fun processCheckout(
         cartItems: List<com.mobile.tugasrancangmoka.model.CartItem>,
         discount: Double,
@@ -31,7 +28,6 @@ class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
     ) {
         _checkoutState.value = CheckoutResult.Loading
 
-        // Konversi item keranjang lokal menjadi objek CheckoutItem API
         val checkoutItems = cartItems.map {
             CheckoutItem(productId = it.product.id ?: 0, quantity = it.quantity)
         }

@@ -23,6 +23,10 @@ class SessionManager(context: Context) {
 
     fun getToken(): String? = prefs.getString(KEY_TOKEN, null)
 
+    fun getRole(): String? = prefs.getString(KEY_USER_ROLE, null)
+
+    fun getName(): String? = prefs.getString(KEY_USER_NAME, null)
+
     fun clearSession() {
         prefs.edit().clear().apply()
     }

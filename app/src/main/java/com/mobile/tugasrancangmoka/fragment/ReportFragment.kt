@@ -31,11 +31,9 @@ class ReportFragment : Fragment() {
 
     private var _binding: FragmentReportBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: ReportVM
     private var isDailyMode = true
     private var selectedDate: Date = Date()
-
     private val dailyDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     private val monthlyDateFormatter = SimpleDateFormat("yyyy-MM", Locale.US)
 
@@ -123,7 +121,6 @@ class ReportFragment : Fragment() {
 
                     val reportList = result.response.data
                     if (!reportList.isNullOrEmpty()) {
-                        // 1. Akumulasikan total revenue dan gross profit dari list data laporan
                         val totalRevenue = reportList.sumOf { it.totalRevenue }
                         val grossProfit = reportList.sumOf { it.grossProfit }
 
@@ -132,10 +129,8 @@ class ReportFragment : Fragment() {
                         binding.textReportRevenue.text = formatter.format(totalRevenue)
                         binding.textReportMargin.text = formatter.format(grossProfit)
 
-                        // 2. Generate tren data untuk grafik berdasarkan list laporan harian/bulanan
                         setupChart(reportList)
                     } else {
-                        // Handle jika list dari server kosong
                         binding.textReportRevenue.text = "Rp0"
                         binding.textReportMargin.text = "Rp0"
                         binding.reportChart.clear()
@@ -154,7 +149,6 @@ class ReportFragment : Fragment() {
         val entries = ArrayList<Entry>()
         val labels = ArrayList<String>()
 
-        // Mengisi grafik berdasarkan field 'date' jika harian, atau 'month' jika bulanan
         for ((index, report) in reportList.withIndex()) {
             entries.add(Entry(index.toFloat(), report.totalRevenue.toFloat()))
 

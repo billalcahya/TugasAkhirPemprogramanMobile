@@ -1,5 +1,11 @@
 package com.mobile.tugasrancangmoka.fragment
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,33 +23,40 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mobile.tugasrancangmoka.R
+import com.mobile.tugasrancangmoka.activity.LoginActivity
 import com.mobile.tugasrancangmoka.api.ApiClient
 import com.mobile.tugasrancangmoka.databinding.DialogAddCategoryBinding
 import com.mobile.tugasrancangmoka.databinding.DialogAddProductBinding
 import com.mobile.tugasrancangmoka.databinding.FragmentSettingsBinding
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.CategoryRepo
+import com.mobile.tugasrancangmoka.utils.SessionManager
 import com.mobile.tugasrancangmoka.viewmodel.SettingsVM
 import com.mobile.tugasrancangmoka.viewmodel.UnitModel
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: SettingsVM
-    private var imageUri : Uri? = null
-    private var currentDialogImageView: ImageView?= null
+    private var imageUri: Uri? = null
+    private var currentDialogImageView: ImageView? = null
 
-    private val getImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            imageUri = it
-            currentDialogImageView?.setImageURI(it)
+    private val getImage =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                imageUri = it
+                currentDialogImageView?.setImageURI(it)
+            }
         }
-    }
 
     private class UserAdapter(
         private val userList: List<com.mobile.tugasrancangmoka.model.User>,
+        private val currentUserRole: String?, // Tambahkan parameter role user yang sedang login
         private val onEditClick: (com.mobile.tugasrancangmoka.model.User) -> Unit
     ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
@@ -66,7 +79,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             holder.tvRole.text = user.role.uppercase()
             holder.tvAvatar.text = user.initial
 
-            holder.btnAction.setOnClickListener { onEditClick(user) }
+            // Kontrol visibilitas tombol edit per baris item user
+            if (currentUserRole?.equals("admin", ignoreCase = true) == true) {
+                holder.btnAction.visibility = View.VISIBLE
+                holder.btnAction.setOnClickListener { onEditClick(user) }
+            } else {
+                holder.btnAction.visibility = View.GONE
+            }
         }
 
         override fun getItemCount(): Int = userList.size
@@ -81,8 +100,54 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val factory = ViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[SettingsVM::class.java]
 
+        val tvUsername = view.findViewById<TextView>(R.id.tv_username)
+        val tvUserRole = view.findViewById<TextView>(R.id.tv_user_role)
+
+        val sessionManager = SessionManager(requireContext())
+
+        tvUsername.text = sessionManager.getName() ?: "Guest"
+        tvUserRole.text = (sessionManager.getRole() ?: "No Role").uppercase(java.util.Locale.ROOT)
+
         setupActionListeners()
         setupObservers()
+
+        val prefs = requireContext().getSharedPreferences("smartcafe_prefs", Context.MODE_PRIVATE)
+        val userRole = prefs.getString("user_role", "cashier")
+        if (userRole?.equals("admin", ignoreCase = true) == true) {
+            // JIKA ADMIN: Tampilkan SEMUA tombol tanpa ada yang di-hide
+            binding.btnGridAddCategory.visibility = View.VISIBLE
+            binding.btnGridManageCategory.visibility = View.VISIBLE
+            binding.btnGridAddProduct.visibility = View.VISIBLE
+            binding.btnGridManageProduct.visibility = View.VISIBLE
+            binding.btnAddUser.visibility = View.VISIBLE
+        } else {
+            // JIKA BUKAN ADMIN (KASIR): Sembunyikan semua tombol ADD, tombol informasi items tetap terlihat
+            binding.btnGridAddCategory.visibility = View.GONE
+            binding.btnGridManageCategory.visibility = View.VISIBLE
+            binding.btnGridAddProduct.visibility = View.GONE
+            binding.btnGridManageProduct.visibility = View.VISIBLE
+            binding.btnAddUser.visibility = View.GONE
+        }
+
+        binding.switchAutoPrint.isChecked = prefs.getBoolean("auto_print", true)
+        binding.switchAutoPrint.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("auto_print", isChecked).apply()
+            val statusText = if (isChecked) "diaktifkan" else "dinonaktifkan"
+            Toast.makeText(requireContext(), "Auto-print $statusText", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnTestPrint.setOnClickListener {
+            performTestPrint()
+        }
+
+        binding.btnLogout.setOnClickListener {
+            val session = SessionManager(requireContext())
+            session.clearSession()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            requireActivity().finish()
+        }
 
         binding.rvUsers.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
 //        val userAdapter = UserAdapter(emptyList()) { clickedUser ->
@@ -91,15 +156,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 //        }
         viewModel.users.observe(viewLifecycleOwner) { listUser ->
             if (!listUser.isNullOrEmpty()) {
-                binding.rvUsers.adapter = UserAdapter(listUser) { clickedUser ->
-                    // Menampilkan menu pilihan Edit / Hapus langsung saat item diklik
+                // Kirim userRole ke adapter
+                binding.rvUsers.adapter = UserAdapter(listUser, userRole) { clickedUser ->
                     AlertDialog.Builder(requireContext())
                         .setTitle("Opsi User: ${clickedUser.fullName}")
                         .setItems(arrayOf("Edit Informasi", "Hapus User")) { _, which ->
                             when (which) {
-                                0 -> showEditUserDialog(clickedUser) // Membuka dialog edit membawa data objek terpilih
+                                0 -> showEditUserDialog(clickedUser)
                                 1 -> {
-                                    // Konfirmasi Hapus
                                     AlertDialog.Builder(requireContext())
                                         .setTitle("Hapus User")
                                         .setMessage("Apakah Anda yakin ingin menghapus user '${clickedUser.fullName}'?")
@@ -115,8 +179,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
         }
 
-
-        // Ambil jumlah kategori, unit, & produk saat fragment pertama kali dibuka
         viewModel.fetchCategoriesCount()
         viewModel.fetchUnitsCount()
         viewModel.fetchProducts(null, null)
@@ -261,7 +323,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
                                 val paddingPx = (24 * resources.displayMetrics.density).toInt()
                                 val container = android.widget.FrameLayout(requireContext())
-                                container.setPadding(paddingPx, paddingPx / 2, paddingPx, paddingPx / 2)
+                                container.setPadding(
+                                    paddingPx,
+                                    paddingPx / 2,
+                                    paddingPx,
+                                    paddingPx / 2
+                                )
                                 container.addView(input)
 
                                 AlertDialog.Builder(requireContext())
@@ -301,86 +368,86 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         alertDialog.show()
     }
 
-    private fun showUnitDialog() {
-        val dialogBinding = DialogAddCategoryBinding.inflate(layoutInflater)
-        val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
-        val alertDialog = builder.create()
-        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        // Ubah text secara dinamis agar sesuai dengan pengelolaan Unit
-        val rootLayout = dialogBinding.root.getChildAt(0) as LinearLayout
-        val titleText = rootLayout.getChildAt(0) as TextView
-        titleText.text = "Tambah/Kelola Unit"
-        val subtitleText = rootLayout.getChildAt(1) as TextView
-        subtitleText.text = "Unit Saat Ini:"
-        dialogBinding.tilCategoryName.hint = "Nama Unit baru (cth: Pcs)"
-        dialogBinding.etCategoryName.hint = "Nama Unit baru (cth: Pcs)"
-
-        // READ: Menampilkan List data ke ListView
-        viewModel.units.observe(viewLifecycleOwner) { listUnit ->
-            val namesList = listUnit.map { it.name }
-            dialogBinding.rvExistingCategories.adapter = android.widget.ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_list_item_1,
-                namesList
-            )
-
-            // UPDATE & DELETE: Ketika salah satu item unit di dalam list diklik
-            dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
-                val selectedUnit = listUnit[position]
-
-                // Tampilkan opsi Edit atau Hapus
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Opsi Unit: ${selectedUnit.name}")
-                    .setItems(arrayOf("Edit Nama", "Hapus Unit")) { _, which ->
-                        when (which) {
-                            0 -> { // Memilih Edit Nama
-                                dialogBinding.etCategoryName.setText(selectedUnit.name)
-                                dialogBinding.btnSave.text = "Update"
-
-                                dialogBinding.btnSave.setOnClickListener {
-                                    val newName =
-                                        dialogBinding.etCategoryName.text.toString().trim()
-                                    if (newName.isNotEmpty()) {
-                                        viewModel.updateUnit(selectedUnit.id, newName)
-                                        alertDialog.dismiss()
-                                    }
-                                }
-                            }
-
-                            1 -> { // Memilih Hapus Unit
-                                AlertDialog.Builder(requireContext())
-                                    .setTitle("Hapus Unit")
-                                    .setMessage("Apakah Anda yakin ingin menghapus unit '${selectedUnit.name}'?")
-                                    .setPositiveButton("Ya") { _, _ ->
-                                        viewModel.deleteUnit(selectedUnit.id)
-                                        alertDialog.dismiss()
-                                    }
-                                    .setNegativeButton("Batal", null)
-                                    .show()
-                            }
-                        }
-                    }.show()
-            }
-        }
-
-        // CREATE: Aksi default tombol simpan untuk menambah unit baru
-        dialogBinding.btnSave.setOnClickListener {
-            val unitName = dialogBinding.etCategoryName.text.toString().trim()
-            if (unitName.isNotEmpty()) {
-                viewModel.addUnit(unitName)
-                alertDialog.dismiss()
-            } else {
-                dialogBinding.tilCategoryName.error = "Nama unit wajib diisi"
-            }
-        }
-
-        dialogBinding.btnCancel.setOnClickListener {
-            alertDialog.dismiss()
-        }
-
-        alertDialog.show()
-    }
+//    private fun showUnitDialog() {
+//        val dialogBinding = DialogAddCategoryBinding.inflate(layoutInflater)
+//        val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
+//        val alertDialog = builder.create()
+//        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+//
+//        // Ubah text secara dinamis agar sesuai dengan pengelolaan Unit
+//        val rootLayout = dialogBinding.root.getChildAt(0) as LinearLayout
+//        val titleText = rootLayout.getChildAt(0) as TextView
+//        titleText.text = "Tambah/Kelola Unit"
+//        val subtitleText = rootLayout.getChildAt(1) as TextView
+//        subtitleText.text = "Unit Saat Ini:"
+//        dialogBinding.tilCategoryName.hint = "Nama Unit baru (cth: Pcs)"
+//        dialogBinding.etCategoryName.hint = "Nama Unit baru (cth: Pcs)"
+//
+//        // READ: Menampilkan List data ke ListView
+//        viewModel.units.observe(viewLifecycleOwner) { listUnit ->
+//            val namesList = listUnit.map { it.name }
+//            dialogBinding.rvExistingCategories.adapter = android.widget.ArrayAdapter(
+//                requireContext(),
+//                android.R.layout.simple_list_item_1,
+//                namesList
+//            )
+//
+//            // UPDATE & DELETE: Ketika salah satu item unit di dalam list diklik
+//            dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
+//                val selectedUnit = listUnit[position]
+//
+//                // Tampilkan opsi Edit atau Hapus
+//                AlertDialog.Builder(requireContext())
+//                    .setTitle("Opsi Unit: ${selectedUnit.name}")
+//                    .setItems(arrayOf("Edit Nama", "Hapus Unit")) { _, which ->
+//                        when (which) {
+//                            0 -> { // Memilih Edit Nama
+//                                dialogBinding.etCategoryName.setText(selectedUnit.name)
+//                                dialogBinding.btnSave.text = "Update"
+//
+//                                dialogBinding.btnSave.setOnClickListener {
+//                                    val newName =
+//                                        dialogBinding.etCategoryName.text.toString().trim()
+//                                    if (newName.isNotEmpty()) {
+//                                        viewModel.updateUnit(selectedUnit.id, newName)
+//                                        alertDialog.dismiss()
+//                                    }
+//                                }
+//                            }
+//
+//                            1 -> { // Memilih Hapus Unit
+//                                AlertDialog.Builder(requireContext())
+//                                    .setTitle("Hapus Unit")
+//                                    .setMessage("Apakah Anda yakin ingin menghapus unit '${selectedUnit.name}'?")
+//                                    .setPositiveButton("Ya") { _, _ ->
+//                                        viewModel.deleteUnit(selectedUnit.id)
+//                                        alertDialog.dismiss()
+//                                    }
+//                                    .setNegativeButton("Batal", null)
+//                                    .show()
+//                            }
+//                        }
+//                    }.show()
+//            }
+//        }
+//
+//        // CREATE: Aksi default tombol simpan untuk menambah unit baru
+//        dialogBinding.btnSave.setOnClickListener {
+//            val unitName = dialogBinding.etCategoryName.text.toString().trim()
+//            if (unitName.isNotEmpty()) {
+//                viewModel.addUnit(unitName)
+//                alertDialog.dismiss()
+//            } else {
+//                dialogBinding.tilCategoryName.error = "Nama unit wajib diisi"
+//            }
+//        }
+//
+//        dialogBinding.btnCancel.setOnClickListener {
+//            alertDialog.dismiss()
+//        }
+//
+//        alertDialog.show()
+//    }
 
     private fun showProductDialog(existingProduct: Product? = null) {
         val dialogBinding = DialogAddProductBinding.inflate(layoutInflater)
@@ -483,7 +550,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             existingProduct.imageUrl?.let { url ->
                 if (url.isNotEmpty()) {
                     // Gunakan pustaka load gambar seperti Glide atau Coil untuk efisiensi
-                    Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_product).into(dialogBinding.ivProductPreview)
+                    Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_product)
+                        .into(dialogBinding.ivProductPreview)
 
                     // Alternatif sederhana jika URL-nya lokal/base64, tapi Glide sangat disarankan
                     // dialogBinding.ivProductPreview.setImageURI(Uri.parse(url))
@@ -598,7 +666,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showAddUserDialog() {
-        val dialogBinding = com.mobile.tugasrancangmoka.databinding.DialogAddUserBinding.inflate(layoutInflater)
+        val dialogBinding =
+            com.mobile.tugasrancangmoka.databinding.DialogAddUserBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -632,7 +701,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             // 3. PENGAMAN EMAIL: Validasi format regex email standar (huruf@domain.ekstensi)
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                dialogBinding.tilUserEmail.error = "Format email tidak valid (contoh: user@gmail.com)"
+                dialogBinding.tilUserEmail.error =
+                    "Format email tidak valid (contoh: user@gmail.com)"
                 return@setOnClickListener
             }
 
@@ -660,7 +730,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showEditUserDialog(user: com.mobile.tugasrancangmoka.model.User) {
-        val dialogBinding = com.mobile.tugasrancangmoka.databinding.DialogAddUserBinding.inflate(layoutInflater)
+        val dialogBinding =
+            com.mobile.tugasrancangmoka.databinding.DialogAddUserBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -683,7 +754,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         dialogBinding.spinnerUserRole.adapter = adapter
 
-        val currentRoleIndex = if (user.role.equals("cashier", ignoreCase = true)) roles.indexOf("KASIR") else roles.indexOf("ADMIN")
+        val currentRoleIndex = if (user.role.equals(
+                "cashier",
+                ignoreCase = true
+            )
+        ) roles.indexOf("KASIR") else roles.indexOf("ADMIN")
         if (currentRoleIndex != -1) dialogBinding.spinnerUserRole.setSelection(currentRoleIndex)
 
         // Aksi Tombol Update
@@ -767,6 +842,77 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 viewModel.resetUserResult()
             }
+        }
+    }
+
+    private fun performTestPrint() {
+        val printManager =
+            requireContext().getSystemService(Context.PRINT_SERVICE) as android.print.PrintManager
+        val jobName = "${getString(R.string.app_name)} Test Receipt"
+
+        val width = 480
+        val height = 680
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        canvas.drawColor(android.graphics.Color.WHITE)
+        val paint = Paint()
+        paint.color = android.graphics.Color.BLACK
+        paint.isAntiAlias = true
+
+        // Header
+        paint.textSize = 24f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        canvas.drawText("CENTRAL CAFE", 140f, 60f, paint)
+
+        paint.textSize = 18f
+        paint.typeface = Typeface.DEFAULT
+        canvas.drawText("Jl. Universitas No. 1, Salatiga", 110f, 95f, paint)
+        canvas.drawText("Telp: (0298) 123456", 160f, 125f, paint)
+
+        paint.textSize = 16f
+        canvas.drawText("----------------------------------------", 40f, 160f, paint)
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        canvas.drawText("TEST KONEKSI PRINTER BERHASIL", 70f, 195f, paint)
+
+        paint.typeface = Typeface.DEFAULT
+        val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale("in", "ID"))
+        canvas.drawText("Waktu: ${sdf.format(Date())}", 50f, 240f, paint)
+        canvas.drawText("Koneksi: Ethernet (Epson TM-T88VI)", 50f, 275f, paint)
+        canvas.drawText("Status: Online & Ready", 50f, 310f, paint)
+
+        canvas.drawText("----------------------------------------", 40f, 345f, paint)
+
+        // Sample Items
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        canvas.drawText("Item Tes", 50f, 385f, paint)
+        paint.typeface = Typeface.DEFAULT
+        canvas.drawText("1 x Rp 25.000", 50f, 415f, paint)
+        canvas.drawText("Rp 25.000", 350f, 415f, paint)
+
+        canvas.drawText("----------------------------------------", 40f, 455f, paint)
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        canvas.drawText("TOTAL", 50f, 495f, paint)
+        canvas.drawText("Rp 25.000", 350f, 495f, paint)
+
+        paint.typeface = Typeface.DEFAULT
+        canvas.drawText("----------------------------------------", 40f, 535f, paint)
+
+        paint.textSize = 14f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+        canvas.drawText("Printer Anda siap digunakan untuk aplikasi!", 80f, 575f, paint)
+
+        try {
+            printManager.print(
+                jobName,
+                com.mobile.tugasrancangmoka.utils.BitmapPrintAdapter(bitmap),
+                null
+            )
+            Toast.makeText(requireContext(), "Memulai Test Print...", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Gagal print: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -1,4 +1,4 @@
-package com.mobile.tugasrancangmoka.utils // sesuaikan dengan lokasi package-mu
+package com.mobile.tugasrancangmoka.utils
 
 import android.content.Context
 import android.net.Uri

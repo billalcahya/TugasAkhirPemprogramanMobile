@@ -185,7 +185,6 @@ class HistoryFragment : Fragment() {
         dialogBinding.textDetailDiscount.text = currencyFormatter.format(record.discountAmount)
         dialogBinding.textDetailGrandTotal.text = currencyFormatter.format(record.grandTotal)
 
-        // Status styling
         if (record.status == "voided") {
             dialogBinding.textDetailStatus.text = "Voided"
             dialogBinding.textDetailStatus.setBackgroundResource(R.drawable.bg_status_voided)
@@ -199,7 +198,6 @@ class HistoryFragment : Fragment() {
             dialogBinding.layoutVoidInfo.visibility = View.GONE
         }
 
-        // Populate Items programmatically
         dialogBinding.layoutDetailItems.removeAllViews()
         val items = record.items.orEmpty()
         for (item in items) {
@@ -254,7 +252,6 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 
-    // Inner Adapter untuk History List
     private class HistoryAdapter(
         private val list: List<TransactionRecord>,
         private val onClick: (TransactionRecord) -> Unit
@@ -277,7 +274,6 @@ class HistoryFragment : Fragment() {
             val item = list[position]
             holder.textCode.text = item.transactionCode
 
-            // Format date
             try {
                 val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
                 val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())

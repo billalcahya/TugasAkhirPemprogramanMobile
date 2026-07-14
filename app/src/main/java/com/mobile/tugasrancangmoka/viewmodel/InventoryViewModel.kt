@@ -18,7 +18,7 @@ sealed class InventoryResult {
 
 sealed class UpdateStockResult {
     object Loading : UpdateStockResult()
-    data class Success(val inventory: InventoryItem) : UpdateStockResult() // Ubah dari Product ke InventoryItem
+    data class Success(val inventory: InventoryItem) : UpdateStockResult()
     data class Error(val message: String) : UpdateStockResult()
 }
 
@@ -37,7 +37,6 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                 val response = repository.getProducts(categoryId, search)
                 val body = response.body()
 
-                // Mengambil data dari body.data (InventoryResponse)
                 if (response.isSuccessful && body != null && body.data != null) {
                     _inventoryState.value = InventoryResult.Success(body.data)
                 } else {
@@ -59,7 +58,6 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                     fetchStock()
                 } else {
                     if (response.code() == 404) {
-                        // Jika simulasi terpaksa dijalankan, buat objek berbasis InventoryItem
                         _updateStockState.value = UpdateStockResult.Success(
                             InventoryItem(
                                 id = id,

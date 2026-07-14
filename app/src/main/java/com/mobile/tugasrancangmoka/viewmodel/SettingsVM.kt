@@ -30,7 +30,6 @@ class SettingsVM(
     private val userRepo: UserRepo
 ) : ViewModel() {
 
-    // --- STATE & LIVE DATA CATEGORIES ---
     private val _categoryResult = MutableLiveData<String>()
     val categoryResult: LiveData<String> = _categoryResult
 
@@ -40,7 +39,6 @@ class SettingsVM(
     private val _categories = MutableLiveData<List<Category>>()
     val categories: LiveData<List<Category>> = _categories
 
-    // --- STATE & LIVE DATA UNITS ---
     private val _unitResult = MutableLiveData<String>()
     val unitResult: LiveData<String> = _unitResult
 
@@ -50,7 +48,6 @@ class SettingsVM(
     private val _units = MutableLiveData<List<UnitModel>>()
     val units: LiveData<List<UnitModel>> = _units
 
-    // --- STATE & LIVE DATA PRODUCTS ---
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>> = _products
 
@@ -63,7 +60,6 @@ class SettingsVM(
     private val _users = MutableLiveData<List<User>>()
     val users: LiveData<List<User>> = _users
 
-    // In-memory list for Units, initialized with common defaults
     private val unitList = mutableListOf(
         UnitModel(1, "pcs"),
         UnitModel(2, "gelas"),
@@ -155,47 +151,41 @@ class SettingsVM(
         }
     }
 
-    // ==========================================
-    // LOGIKA OPERASI UNITS
-    // ==========================================
     fun fetchUnitsCount() {
         _unitsCount.postValue(unitList.size)
         _units.postValue(unitList.toList())
     }
+//
+//    fun addUnit(name: String) {
+//        val newId = (unitList.maxOfOrNull { it.id } ?: 0) + 1
+//        unitList.add(UnitModel(newId, name))
+//        _unitResult.postValue("Unit '$name' berhasil ditambahkan!")
+//        fetchUnitsCount()
+//    }
+//
+//    fun updateUnit(id: Int, newName: String) {
+//        val index = unitList.indexOfFirst { it.id == id }
+//        if (index != -1) {
+//            unitList[index] = UnitModel(id, newName)
+//            _unitResult.postValue("Unit berhasil diperbarui!")
+//            fetchUnitsCount()
+//        } else {
+//            _unitResult.postValue("Unit tidak ditemukan!")
+//        }
+//    }
+//
+//    fun deleteUnit(id: Int) {
+//        val index = unitList.indexOfFirst { it.id == id }
+//        if (index != -1) {
+//            val name = unitList[index].name
+//            unitList.removeAt(index)
+//            _unitResult.postValue("Unit '$name' berhasil dihapus!")
+//            fetchUnitsCount()
+//        } else {
+//            _unitResult.postValue("Unit tidak ditemukan!")
+//        }
+//    }
 
-    fun addUnit(name: String) {
-        val newId = (unitList.maxOfOrNull { it.id } ?: 0) + 1
-        unitList.add(UnitModel(newId, name))
-        _unitResult.postValue("Unit '$name' berhasil ditambahkan!")
-        fetchUnitsCount()
-    }
-
-    fun updateUnit(id: Int, newName: String) {
-        val index = unitList.indexOfFirst { it.id == id }
-        if (index != -1) {
-            unitList[index] = UnitModel(id, newName)
-            _unitResult.postValue("Unit berhasil diperbarui!")
-            fetchUnitsCount()
-        } else {
-            _unitResult.postValue("Unit tidak ditemukan!")
-        }
-    }
-
-    fun deleteUnit(id: Int) {
-        val index = unitList.indexOfFirst { it.id == id }
-        if (index != -1) {
-            val name = unitList[index].name
-            unitList.removeAt(index)
-            _unitResult.postValue("Unit '$name' berhasil dihapus!")
-            fetchUnitsCount()
-        } else {
-            _unitResult.postValue("Unit tidak ditemukan!")
-        }
-    }
-
-    // ==========================================
-    // LOGIKA OPERASI PRODUCTS
-    // ==========================================
     fun fetchProducts(categoryId: Int?, search: String?) {
         viewModelScope.launch {
             try {
@@ -204,7 +194,6 @@ class SettingsVM(
                     val productList = response.body().orEmpty()
                     _products.postValue(productList)
 
-                    // Ekstrak unit unik dari produk dan masukkan ke unitList jika belum ada
                     var updated = false
                     productList.mapNotNull { it.unit }.distinct().forEach { prodUnit ->
                         val exists = unitList.any { it.name.equals(prodUnit, ignoreCase = true) }
@@ -277,20 +266,17 @@ class SettingsVM(
     fun addProductWithImage(context: Context, product: Product, imageUri: Uri?) {
         viewModelScope.launch {
             try {
-                // Menyiapkan bagian Multipart untuk Gambar
                 val imagePart: MultipartBody.Part? = if (imageUri != null) {
                     val file = UriToFileUtil.getFileFromUri(context, imageUri)
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                    MultipartBody.Part.createFormData("product_image", file.name, requestFile) // "product_image" adalah nama field di API
+                    MultipartBody.Part.createFormData("product_image", file.name, requestFile)
                 } else {
-                    null // Gambar opsional
+                    null
                 }
 
-                // Menyiapkan bagian Multipart untuk Data Produk (Mengubah JSON menjadi String Multipart)
                 val productJson = Gson().toJson(product)
-                val productPart = MultipartBody.Part.createFormData("product_data", productJson) // "product_data" adalah nama field di API
+                val productPart = MultipartBody.Part.createFormData("product_data", productJson)
 
-                // Panggil API dengan tipe Multipart
                 val response = productRepo.addProductMultipart(productPart, imagePart)
 
                 if (response.isSuccessful) {
@@ -310,7 +296,6 @@ class SettingsVM(
             try {
                 val response = userRepo.getUsers()
                 if (response.isSuccessful && response.body() != null) {
-                    // Ambil property '.data' yang bertipe List<User> dari objek pembungkusnya
                     val userListData = response.body()!!.data
                     _users.postValue(userListData)
                 } else {

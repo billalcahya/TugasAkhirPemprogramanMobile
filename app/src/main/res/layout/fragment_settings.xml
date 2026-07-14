@@ -15,7 +15,7 @@
         app:elevation="0dp"
         app:liftOnScroll="false">
 
-        <!-- Toolbar disesuaikan dengan typography title fragment report (24sp, Bold, Color Primary) -->
+        <!-- Toolbar disesuaikan dengan typography title fragment report -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                     android:padding="16dp">
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/iconStoreFrame"
+                        android:id="@+id/iconUserFrame"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         app:cardBackgroundColor="@color/primary"
@@ -82,23 +82,40 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_toEndOf="@id/iconStoreFrame"
+                        android:layout_toEndOf="@id/iconUserFrame"
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_username"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Central Cafe"
+                            android:text="Nama User"
                             android:textColor="@color/on_surface"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <!-- Ditambahkan strokeWidth dan strokeColor untuk membuat border -->
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Store ID: ROAST-001 • v1.2.0"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="14sp" />
+                            android:layout_marginTop="2dp"
+                            app:cardBackgroundColor="@color/surface_container_low"
+                            app:cardCornerRadius="4dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/primary">
+
+                            <TextView
+                                android:id="@+id/tv_user_role"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="1dp"
+                                android:text="ROLE"
+                                android:textColor="@color/primary"
+                            android:textSize="9sp"
+                            android:textStyle="bold"/>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
 
                     <com.google.android.material.card.MaterialCardView
@@ -115,7 +132,7 @@
                             android:layout_height="wrap_content"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="4dp"
-                            android:text="Online"
+                            android:text="Active"
                             android:textColor="#0E1F13"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -188,7 +205,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Manage menu sections."
+                            android:text="Manage Menu Sections."
                             android:textColor="@color/on_surface_variant"
                             android:textSize="12sp" />
 
@@ -206,8 +223,10 @@
                                 android:text="Add"
                                 android:textColor="@color/primary"
                                 android:textSize="11sp"
+                                android:visibility="gone"
                                 app:backgroundTint="@color/surface_container_high"
-                                app:cornerRadius="6dp" />
+                                app:cornerRadius="6dp"
+                                tools:visibility="visible" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnGridManageCategory"
@@ -264,7 +283,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Add &amp; manage products"
+                            android:text="Manage Products"
                             android:textColor="@color/on_surface_variant"
                             android:textSize="12sp" />
 
@@ -282,8 +301,10 @@
                                 android:text="Add"
                                 android:textColor="@color/primary"
                                 android:textSize="11sp"
+                                android:visibility="gone"
                                 app:backgroundTint="@color/surface_container_high"
-                                app:cornerRadius="6dp" />
+                                app:cornerRadius="6dp"
+                                tools:visibility="visible" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnGridManageProduct"
@@ -331,7 +352,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Header: Tetap dipertahankan agar tombol add berfungsi -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -368,8 +388,10 @@
                             android:text="+ Add User"
                             android:textColor="@android:color/white"
                             android:textSize="12sp"
+                            android:visibility="gone"
                             app:backgroundTint="@color/primary"
-                            app:cornerRadius="20dp" />
+                            app:cornerRadius="20dp"
+                            tools:visibility="visible" />
                     </RelativeLayout>
 
                     <View
@@ -377,7 +399,6 @@
                         android:layout_height="1dp"
                         android:background="@color/surface_container_high" />
 
-                    <!-- RECYCLERVIEW: Tempat menampung data user dinamis dari DB -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_users"
                         android:layout_width="match_parent"
@@ -407,11 +428,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/surface_container"
                 app:cardCornerRadius="@dimen/radius_lg"
                 app:strokeWidth="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/label_hardware">
 
                 <LinearLayout
@@ -436,6 +455,7 @@
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
+                                android:src="@drawable/ic_print"
                                 app:tint="@color/primary"/>
                         </com.google.android.material.card.MaterialCardView>
 
@@ -481,34 +501,45 @@
                         android:layout_marginVertical="12dp"
                         android:background="@color/surface_container_low"/>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content">
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp">
+                            android:layout_centerVertical="true"
+                            android:text="Auto-print receipts"
+                            android:textColor="@color/on_surface"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:text="Auto-print receipts"
-                                android:textColor="@color/on_surface"/>
-
-                            <com.google.android.material.materialswitch.MaterialSwitch
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:checked="true"
-                                app:thumbTint="@android:color/white"
-                                app:trackTint="@color/primary"/>
-                        </RelativeLayout>
-                    </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switch_auto_print"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:checked="true"
+                            app:thumbTint="@color/switch_thumb_colors"
+                            app:trackTint="@color/switch_track_colors"/>
+                    </RelativeLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tombol Logout yang Rapi dan Terstandarisasi -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_logout"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="32dp"
+                android:text="Logout"
+                android:textColor="@android:color/white"
+                app:backgroundTint="@color/error"
+                app:strokeWidth="0dp"
+                app:cornerRadius="@dimen/radius_lg"
+                app:layout_constraintTop_toBottomOf="@id/card_hardware"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

@@ -20,7 +20,6 @@ class POSViewModel(private val productRepo: ProductRepo) : ViewModel() {
     private val _productState = MutableLiveData<ProductResult>()
     val productState: LiveData<ProductResult> = _productState
 
-    // State untuk keranjang belanja belanja lokal
     private val _cartItems = MutableLiveData<List<CartItem>>(emptyList())
     val cartItems: LiveData<List<CartItem>> = _cartItems
 
