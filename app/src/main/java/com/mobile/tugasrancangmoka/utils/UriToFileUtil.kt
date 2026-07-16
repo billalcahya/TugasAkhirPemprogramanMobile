@@ -12,10 +12,9 @@ object UriToFileUtil {
         val tempFile = File.createTempFile("upload_", ".jpg", context.cacheDir)
 
         val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(tempFile)
 
         inputStream?.use { input ->
-            outputStream.use { output ->
+            FileOutputStream(tempFile).use { output ->
                 input.copyTo(output)
             }
         }

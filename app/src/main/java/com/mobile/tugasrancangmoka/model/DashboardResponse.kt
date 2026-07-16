@@ -16,7 +16,7 @@ data class DashboardData(
 )
 
 data class SalesBarData(
-    val date: String, // format YYYY-MM-DD
+    val date: String,
     val total: Double
 )
 

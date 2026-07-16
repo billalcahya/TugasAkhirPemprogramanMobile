@@ -12,14 +12,3 @@ data class Category(
 data class CategoryRequest(
     @SerializedName("name") val name: String
 )
-
-data class CategoryResponse(
-    @SerializedName("status") val status: String,
-    @SerializedName("message") val message: String
-)
-
-data class CategoryListResponse(
-    @SerializedName("status") val status: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("data") val data: List<Category>?
-)

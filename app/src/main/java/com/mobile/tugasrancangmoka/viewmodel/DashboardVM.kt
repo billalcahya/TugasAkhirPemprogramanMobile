@@ -17,17 +17,17 @@ class DashboardVM(private val repository: DashboardRepo) : ViewModel() {
     private val _dashboardState = MutableLiveData<DashboardResult>()
     val dashboardState: LiveData<DashboardResult> = _dashboardState
     fun fetchDashboard() {
-        _dashboardState.value = DashboardResult.Loading
+        _dashboardState.postValue(DashboardResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getDashboardData()
                 if (response.isSuccessful && response.body() != null) {
-                    _dashboardState.value = DashboardResult.Success(response.body()!!)
+                    _dashboardState.postValue(DashboardResult.Success(response.body()!!))
                 } else {
-                    _dashboardState.value = DashboardResult.Error("Gagal mengambil data ringkasan dashboard")
+                    _dashboardState.postValue(DashboardResult.Error("Gagal mengambil data ringkasan dashboard"))
                 }
             } catch (e: Exception) {
-                _dashboardState.value = DashboardResult.Error("Gagal terhubung ke server: ${e.message}")
+                _dashboardState.postValue(DashboardResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }

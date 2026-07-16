@@ -34,7 +34,7 @@ class POSViewModel(private val productRepo: ProductRepo) : ViewModel() {
                     _productState.value = ProductResult.Error("Gagal memuat produk")
                 }
             } catch (e: Exception) {
-                _productState.value = ProductResult.Error("Koneksi internet bermasalah")
+                _productState.value = ProductResult.Error("Kesalahan koneksi internet: ${com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)}")
             }
         }
     }

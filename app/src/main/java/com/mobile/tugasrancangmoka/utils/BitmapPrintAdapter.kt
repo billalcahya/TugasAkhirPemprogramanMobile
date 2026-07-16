@@ -39,7 +39,6 @@ class BitmapPrintAdapter(private val bitmap: Bitmap) : PrintDocumentAdapter() {
         callback: WriteResultCallback?
     ) {
         val pdfDocument = PdfDocument()
-        // Page width matches bitmap width, height matches bitmap height
         val pageInfo = PdfDocument.PageInfo.Builder(bitmap.width, bitmap.height, 1).create()
         val page = pdfDocument.startPage(pageInfo)
 

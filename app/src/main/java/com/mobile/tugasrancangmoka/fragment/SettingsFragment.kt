@@ -44,6 +44,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var viewModel: SettingsVM
     private var imageUri: Uri? = null
     private var currentDialogImageView: ImageView? = null
+    private var lastToastMessage: String? = null
+    private var lastToastTime: Long = 0
 
     private val getImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -55,7 +57,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private class UserAdapter(
         private val userList: List<com.mobile.tugasrancangmoka.model.User>,
-        private val currentUserRole: String?, // Tambahkan parameter role user yang sedang login
+        private val currentUserRole: String?,
         private val onEditClick: (com.mobile.tugasrancangmoka.model.User) -> Unit
     ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
@@ -78,7 +80,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             holder.tvRole.text = user.role.uppercase()
             holder.tvAvatar.text = user.initial
 
-            // Kontrol visibilitas tombol edit per baris item user
             if (currentUserRole?.equals("admin", ignoreCase = true) == true) {
                 holder.btnAction.visibility = View.VISIBLE
                 holder.btnAction.setOnClickListener { onEditClick(user) }
@@ -113,14 +114,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val prefs = requireContext().getSharedPreferences("smartcafe_prefs", Context.MODE_PRIVATE)
         val userRole = prefs.getString("user_role", "cashier")
         if (userRole?.equals("admin", ignoreCase = true) == true) {
-            // JIKA ADMIN: Tampilkan SEMUA tombol tanpa ada yang di-hide
             binding.btnGridAddCategory.visibility = View.VISIBLE
             binding.btnGridManageCategory.visibility = View.VISIBLE
             binding.btnGridAddProduct.visibility = View.VISIBLE
             binding.btnGridManageProduct.visibility = View.VISIBLE
             binding.btnAddUser.visibility = View.VISIBLE
         } else {
-            // JIKA BUKAN ADMIN (KASIR): Sembunyikan semua tombol ADD, tombol informasi items tetap terlihat
             binding.btnGridAddCategory.visibility = View.GONE
             binding.btnGridManageCategory.visibility = View.VISIBLE
             binding.btnGridAddProduct.visibility = View.GONE
@@ -132,7 +131,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.switchAutoPrint.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("auto_print", isChecked).apply()
             val statusText = if (isChecked) "diaktifkan" else "dinonaktifkan"
-            Toast.makeText(requireContext(), "Auto-print $statusText", Toast.LENGTH_SHORT).show()
+            showToast("Auto-print $statusText", Toast.LENGTH_SHORT)
         }
 
         binding.btnTestPrint.setOnClickListener {
@@ -149,10 +148,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
 
         binding.rvUsers.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
-//        val userAdapter = UserAdapter(emptyList()) { clickedUser ->
-//            // Aksi jika ikon edit/hapus user diklik, contoh:
-//            // showEditDeleteUserOptions(clickedUser)
-//        }
         viewModel.users.observe(viewLifecycleOwner) { listUser ->
             if (!listUser.isNullOrEmpty()) {
                 // Kirim userRole ke adapter
@@ -191,9 +186,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.btnGridManageCategory.setOnClickListener {
             showManageCategoriesDialog()
         }
-//        binding.btnGridAddUnit.setOnClickListener {
-//            showUnitDialog()
-//        }
         binding.btnGridAddProduct.setOnClickListener {
             showProductDialog()
         }
@@ -214,7 +206,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // READ: Menampilkan List data ke ListView
         viewModel.categories.observe(viewLifecycleOwner) { listCategory ->
             val namesList = listCategory.map { it.name }
             dialogBinding.rvExistingCategories.adapter = android.widget.ArrayAdapter(
@@ -223,11 +214,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 namesList
             )
 
-            // UPDATE & DELETE: Ketika salah satu item kategori di dalam list diklik
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
                 val selectedCategory = listCategory[position]
 
-                // Tampilkan opsi Edit atau Hapus
                 AlertDialog.Builder(requireContext())
                     .setTitle("Opsi Kategori: ${selectedCategory.name}")
                     .setItems(arrayOf("Edit Nama", "Hapus Kategori")) { _, which ->
@@ -246,7 +235,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                 }
                             }
 
-                            1 -> { // Memilih Hapus Kategori
+                            1 -> {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Hapus Kategori")
                                     .setMessage("Apakah Anda yakin ingin menghapus kategori '${selectedCategory.name}'?")
@@ -262,7 +251,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
         }
 
-        // CREATE: Aksi default tombol simpan untuk menambah kategori baru
         dialogBinding.btnSave.setOnClickListener {
             val categoryName = dialogBinding.etCategoryName.text.toString().trim()
             if (categoryName.isNotEmpty()) {
@@ -286,14 +274,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Customise text
         val rootLayout = dialogBinding.root.getChildAt(0) as LinearLayout
         val titleText = rootLayout.getChildAt(0) as TextView
         titleText.text = "Kelola Kategori"
         val subtitleText = rootLayout.getChildAt(1) as TextView
         subtitleText.text = "Pilih kategori untuk diubah atau dihapus:"
 
-        // Sembunyikan field input dan tombol save karena ini hanya untuk list/manage
         dialogBinding.tilCategoryName.visibility = View.GONE
         dialogBinding.btnSave.visibility = View.GONE
 
@@ -306,11 +292,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 namesList
             )
 
-            // UPDATE & DELETE: Ketika salah satu item kategori di dalam list diklik
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
                 val selectedCategory = listCategory[position]
 
-                // Tampilkan opsi Edit atau Hapus
                 AlertDialog.Builder(requireContext())
                     .setTitle("Opsi Kategori: ${selectedCategory.name}")
                     .setItems(arrayOf("Edit Nama", "Hapus Kategori")) { _, which ->
@@ -344,7 +328,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                                     .show()
                             }
 
-                            1 -> { // Memilih Hapus Kategori
+                            1 -> {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Hapus Kategori")
                                     .setMessage("Apakah Anda yakin ingin menghapus kategori '${selectedCategory.name}'?")
@@ -367,87 +351,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         alertDialog.show()
     }
 
-//    private fun showUnitDialog() {
-//        val dialogBinding = DialogAddCategoryBinding.inflate(layoutInflater)
-//        val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
-//        val alertDialog = builder.create()
-//        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-//
-//        // Ubah text secara dinamis agar sesuai dengan pengelolaan Unit
-//        val rootLayout = dialogBinding.root.getChildAt(0) as LinearLayout
-//        val titleText = rootLayout.getChildAt(0) as TextView
-//        titleText.text = "Tambah/Kelola Unit"
-//        val subtitleText = rootLayout.getChildAt(1) as TextView
-//        subtitleText.text = "Unit Saat Ini:"
-//        dialogBinding.tilCategoryName.hint = "Nama Unit baru (cth: Pcs)"
-//        dialogBinding.etCategoryName.hint = "Nama Unit baru (cth: Pcs)"
-//
-//        // READ: Menampilkan List data ke ListView
-//        viewModel.units.observe(viewLifecycleOwner) { listUnit ->
-//            val namesList = listUnit.map { it.name }
-//            dialogBinding.rvExistingCategories.adapter = android.widget.ArrayAdapter(
-//                requireContext(),
-//                android.R.layout.simple_list_item_1,
-//                namesList
-//            )
-//
-//            // UPDATE & DELETE: Ketika salah satu item unit di dalam list diklik
-//            dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
-//                val selectedUnit = listUnit[position]
-//
-//                // Tampilkan opsi Edit atau Hapus
-//                AlertDialog.Builder(requireContext())
-//                    .setTitle("Opsi Unit: ${selectedUnit.name}")
-//                    .setItems(arrayOf("Edit Nama", "Hapus Unit")) { _, which ->
-//                        when (which) {
-//                            0 -> { // Memilih Edit Nama
-//                                dialogBinding.etCategoryName.setText(selectedUnit.name)
-//                                dialogBinding.btnSave.text = "Update"
-//
-//                                dialogBinding.btnSave.setOnClickListener {
-//                                    val newName =
-//                                        dialogBinding.etCategoryName.text.toString().trim()
-//                                    if (newName.isNotEmpty()) {
-//                                        viewModel.updateUnit(selectedUnit.id, newName)
-//                                        alertDialog.dismiss()
-//                                    }
-//                                }
-//                            }
-//
-//                            1 -> { // Memilih Hapus Unit
-//                                AlertDialog.Builder(requireContext())
-//                                    .setTitle("Hapus Unit")
-//                                    .setMessage("Apakah Anda yakin ingin menghapus unit '${selectedUnit.name}'?")
-//                                    .setPositiveButton("Ya") { _, _ ->
-//                                        viewModel.deleteUnit(selectedUnit.id)
-//                                        alertDialog.dismiss()
-//                                    }
-//                                    .setNegativeButton("Batal", null)
-//                                    .show()
-//                            }
-//                        }
-//                    }.show()
-//            }
-//        }
-//
-//        // CREATE: Aksi default tombol simpan untuk menambah unit baru
-//        dialogBinding.btnSave.setOnClickListener {
-//            val unitName = dialogBinding.etCategoryName.text.toString().trim()
-//            if (unitName.isNotEmpty()) {
-//                viewModel.addUnit(unitName)
-//                alertDialog.dismiss()
-//            } else {
-//                dialogBinding.tilCategoryName.error = "Nama unit wajib diisi"
-//            }
-//        }
-//
-//        dialogBinding.btnCancel.setOnClickListener {
-//            alertDialog.dismiss()
-//        }
-//
-//        alertDialog.show()
-//    }
-
     private fun showProductDialog(existingProduct: Product? = null) {
         val dialogBinding = DialogAddProductBinding.inflate(layoutInflater)
         val builder = AlertDialog.Builder(requireContext()).setView(dialogBinding.root)
@@ -464,7 +367,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             getImage.launch("image/*")
         }
 
-        // Memuat list kategori ke dalam Spinner untuk relasi "category_id" produk
         viewModel.categories.observe(viewLifecycleOwner) { listCategory ->
             val categoryNames = listCategory.map { it.name }
             val adapter =
@@ -472,7 +374,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dialogBinding.spinnerCategory.adapter = adapter
 
-            // Jika dalam mode EDIT, posisikan spinner pada kategori lama produk
             existingProduct?.let { prod ->
                 val index = listCategory.indexOfFirst { it.id == prod.categoryId }
                 if (index != -1) dialogBinding.spinnerCategory.setSelection(index)
@@ -493,11 +394,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 }
         }
 
-        // Memuat list unit ke dalam Spinner untuk relasi "unit" produk
         viewModel.units.observe(viewLifecycleOwner) { listUnit ->
             val unitNames = listUnit.map { it.name }.toMutableList()
 
-            // Jika dalam mode EDIT dan unit produk tidak ada di list aktif, tambahkan sementara agar tidak hilang
             existingProduct?.let { prod ->
                 val prodUnit = prod.unit ?: "pcs"
                 val exists = unitNames.any { it.equals(prodUnit, ignoreCase = true) }
@@ -511,7 +410,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dialogBinding.spinnerUnit.adapter = adapter
 
-            // Jika dalam mode EDIT, posisikan spinner pada unit lama produk
             existingProduct?.let { prod ->
                 val prodUnit = prod.unit ?: "pcs"
                 val index = unitNames.indexOfFirst { it.equals(prodUnit, ignoreCase = true) }
@@ -536,7 +434,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 }
         }
 
-        // Kondisi jika data diklik untuk UPDATE / DELETE
         if (existingProduct != null) {
             dialogBinding.tvDialogTitle.text = "Ubah Produk"
             dialogBinding.etProductName.setText(existingProduct.name)
@@ -548,12 +445,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             existingProduct.imageUrl?.let { url ->
                 if (url.isNotEmpty()) {
-                    // Gunakan pustaka load gambar seperti Glide atau Coil untuk efisiensi
                     Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_product)
                         .into(dialogBinding.ivProductPreview)
 
-                    // Alternatif sederhana jika URL-nya lokal/base64, tapi Glide sangat disarankan
-                    // dialogBinding.ivProductPreview.setImageURI(Uri.parse(url))
                 }
             }
 
@@ -569,8 +463,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             if (name.isEmpty() || sellPriceStr.isEmpty() || costPriceStr.isEmpty() ||
                 initialStockStr.isEmpty() || minStockStr.isEmpty() || selectedCategoryId == 0
             ) {
-                Toast.makeText(requireContext(), "Semua field wajib diisi!", Toast.LENGTH_SHORT)
-                    .show()
+                showToast("Semua field wajib diisi!", Toast.LENGTH_SHORT)
                 return@setOnClickListener
             }
 
@@ -578,8 +471,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 id = existingProduct?.id,
                 categoryId = selectedCategoryId,
                 name = name,
-                sellPrice = sellPriceStr.toDouble(),
-                costPrice = costPriceStr.toDouble(),
+                sellPrice = sellPriceStr.toDoubleOrNull() ?: 0.0,
+                costPrice = costPriceStr.toDoubleOrNull() ?: 0.0,
                 imageUrl = existingProduct?.imageUrl,
                 initialStock = initialStockStr.toIntOrNull() ?: 0,
                 minStock = minStockStr.toIntOrNull() ?: 0,
@@ -588,10 +481,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             )
 
             if (existingProduct == null) {
-                // Jalankan Aksi CREATE
                 viewModel.addProductWithImage(requireContext(), productData, imageUri)
             } else {
-                // Jalankan Aksi UPDATE
                 viewModel.updateProduct(existingProduct.id ?: 0, productData)
             }
             alertDialog.dismiss()
@@ -606,18 +497,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // Customise text
         val rootLayout = dialogBinding.root.getChildAt(0) as LinearLayout
         val titleText = rootLayout.getChildAt(0) as TextView
         titleText.text = "Kelola Produk"
         val subtitleText = rootLayout.getChildAt(1) as TextView
         subtitleText.text = "Pilih produk untuk diubah atau dihapus:"
 
-        // Sembunyikan field input dan tombol save karena ini hanya untuk list/manage
         dialogBinding.tilCategoryName.visibility = View.GONE
         dialogBinding.btnSave.visibility = View.GONE
 
-        // READ: Menampilkan List data ke ListView
         viewModel.products.observe(viewLifecycleOwner) { listProduct ->
             val namesList =
                 listProduct.map { "${it.name} (${it.unit ?: "pcs"}) - Rp ${it.sellPrice.toInt()}" }
@@ -627,21 +515,19 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 namesList
             )
 
-            // UPDATE & DELETE: Ketika salah satu item produk di dalam list diklik
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
                 val selectedProduct = listProduct[position]
 
-                // Tampilkan opsi Edit atau Hapus
                 AlertDialog.Builder(requireContext())
                     .setTitle("Opsi Produk: ${selectedProduct.name}")
                     .setItems(arrayOf("Edit Produk", "Hapus Produk")) { _, which ->
                         when (which) {
-                            0 -> { // Memilih Edit Produk
+                            0 -> {
                                 showProductDialog(selectedProduct)
                                 alertDialog.dismiss()
                             }
 
-                            1 -> { // Memilih Hapus Produk
+                            1 -> {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Hapus Produk")
                                     .setMessage("Apakah Anda yakin ingin menghapus produk '${selectedProduct.name}'?")
@@ -686,33 +572,27 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             dialogBinding.tilUserEmail.error = null
             dialogBinding.tilUserPassword.error = null
 
-            // 1. Pengaman Nama Lengkap
             if (fullName.isEmpty()) {
                 dialogBinding.tilUserFullname.error = "Nama lengkap wajib diisi"
                 return@setOnClickListener
             }
 
-            // 2. PENGAMAN EMAIL: Cek apakah kosong
             if (email.isEmpty()) {
                 dialogBinding.tilUserEmail.error = "Email wajib diisi"
                 return@setOnClickListener
             }
 
-            // 3. PENGAMAN EMAIL: Validasi format regex email standar (huruf@domain.ekstensi)
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 dialogBinding.tilUserEmail.error =
                     "Format email tidak valid (contoh: user@gmail.com)"
                 return@setOnClickListener
             }
 
-            // 4. Pengaman Password
             if (password.isEmpty() || password.length < 6) {
                 dialogBinding.tilUserPassword.error = "Password minimal 6 karakter"
                 return@setOnClickListener
             }
 
-            // Susun Map dengan key parameter yang sesuai dengan schema backend Node.js Anda
-            // Jika lolos semua pengaman, kirim data ke backend
             val requestMap = mapOf(
                 "full_name" to fullName,
                 "email" to email,
@@ -738,16 +618,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         dialogBinding.tvDialogTitle.text = "Ubah Informasi User"
         dialogBinding.btnSave.text = "Update"
 
-        // 1. Set data lama user ke dalam form input
         dialogBinding.etUserFullname.setText(user.fullName)
-        dialogBinding.etUserEmail.setText(user.email) // <-- Set email lama
+        dialogBinding.etUserEmail.setText(user.email)
 
-        // 2. PASTIKAN INPUT EMAIL & PASSWORD KEDUANYA VISIBLE
-        dialogBinding.tilUserEmail.visibility = View.VISIBLE    // Tampilkan email
-        dialogBinding.tilUserPassword.visibility = View.VISIBLE // Tampilkan password
+        dialogBinding.tilUserEmail.visibility = View.VISIBLE
+        dialogBinding.tilUserPassword.visibility = View.VISIBLE
         dialogBinding.tilUserPassword.hint = "Isi jika ingin ganti password baru"
 
-        // Setup Spinner Role
         val roles = arrayOf("ADMIN", "KASIR")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, roles)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -760,14 +637,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         ) roles.indexOf("KASIR") else roles.indexOf("ADMIN")
         if (currentRoleIndex != -1) dialogBinding.spinnerUserRole.setSelection(currentRoleIndex)
 
-        // Aksi Tombol Update
         dialogBinding.btnSave.setOnClickListener {
             val fullName = dialogBinding.etUserFullname.text.toString().trim()
             val email = dialogBinding.etUserEmail.text.toString().trim() // Ambil ketikan email baru
             val password = dialogBinding.etUserPassword.text.toString().trim()
             val selectedRoleText = dialogBinding.spinnerUserRole.selectedItem.toString()
 
-            // --- VALIDASI DAN PENGAMAN INPUT ---
             if (fullName.isEmpty()) {
                 dialogBinding.tilUserFullname.error = "Nama lengkap wajib diisi"
                 return@setOnClickListener
@@ -787,10 +662,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             val backendRole = if (selectedRoleText == "KASIR") "cashier" else "admin"
 
-            // 3. Susun data Map lengkap termasuk email baru untuk dikirim ke ViewModel
             val updateMap = mutableMapOf(
                 "full_name" to fullName,
-                "email" to email, // <-- Kirim email ke server
+                "email" to email, //
                 "role" to backendRole
             )
 
@@ -809,26 +683,26 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun setupObservers() {
         viewModel.categoryResult.observe(viewLifecycleOwner) { result ->
             if (!result.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), result, Toast.LENGTH_SHORT).show()
+                showToast(result, Toast.LENGTH_SHORT)
                 viewModel.resetCategoryResult()
             }
         }
 
-        // Mengamati perubahan jumlah kategori dan memperbarui teks tombol secara dinamis
         viewModel.categoriesCount.observe(viewLifecycleOwner) { count ->
             binding.btnGridManageCategory.text = "$count Items"
         }
 
         viewModel.unitResult.observe(viewLifecycleOwner) { message ->
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-            viewModel.fetchUnitsCount()
+            if (!message.isNullOrEmpty()) {
+                showToast(message, Toast.LENGTH_LONG)
+                viewModel.fetchUnitsCount()
+            }
         }
 
         viewModel.productResult.observe(viewLifecycleOwner) { message ->
             if (!message.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                showToast(message, Toast.LENGTH_LONG)
                 viewModel.resetProductResult()
-                viewModel.fetchProducts(null, null)
             }
         }
 
@@ -838,10 +712,20 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         viewModel.userResult.observe(viewLifecycleOwner) { message ->
             if (!message.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                showToast(message, Toast.LENGTH_SHORT)
                 viewModel.resetUserResult()
             }
         }
+    }
+
+    private fun showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+        val currentTime = System.currentTimeMillis()
+        if (message == lastToastMessage && currentTime - lastToastTime < 2000) {
+            return
+        }
+        lastToastMessage = message
+        lastToastTime = currentTime
+        Toast.makeText(requireContext(), message, duration).show()
     }
 
     private fun performTestPrint() {
@@ -859,7 +743,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         paint.color = android.graphics.Color.BLACK
         paint.isAntiAlias = true
 
-        // Header
         paint.textSize = 24f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         canvas.drawText("CENTRAL CAFE", 140f, 60f, paint)
@@ -883,7 +766,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         canvas.drawText("----------------------------------------", 40f, 345f, paint)
 
-        // Sample Items
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         canvas.drawText("Item Tes", 50f, 385f, paint)
         paint.typeface = Typeface.DEFAULT
@@ -909,9 +791,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 com.mobile.tugasrancangmoka.utils.BitmapPrintAdapter(bitmap),
                 null
             )
-            Toast.makeText(requireContext(), "Memulai Test Print...", Toast.LENGTH_SHORT).show()
+            showToast("Memulai Test Print...", Toast.LENGTH_SHORT)
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Gagal print: ${e.message}", Toast.LENGTH_LONG).show()
+            showToast(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e), Toast.LENGTH_LONG)
         }
     }
 

@@ -34,11 +34,9 @@ class LoginActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        // Inisialisasi tingkat komponen data
         val apiService = ApiClient.getApiService(this)
         val repository = AuthRepo(apiService)
 
-        // Menerapkan ViewModel dengan Factory pattern
         val factory = ViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[AuthVM::class.java]
 
@@ -56,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.editEmail.text.toString().trim()
             val password = binding.editPassword.text.toString().trim()
 
-            // Validasi client-side sederhana sebelum hit API
             if (email.isEmpty()) {
                 binding.editEmail.error = "Email cannot be empty"
                 binding.editEmail.requestFocus()
@@ -78,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
         viewModel.loginState.observe(this) { result ->
             when (result) {
                 is LoginResult.Loading -> {
-                    // Tampilkan indikator loading (bisa diatur lewat XML ProgressBar)
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnLogin.isEnabled = false
                 }
@@ -86,10 +82,8 @@ class LoginActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
 
-                    // Ambil data payload dari response body
                     val loginData = result.response.data
                     if (loginData != null) {
-                        // Persist ke SharedPreferences melalui SessionManager
                         sessionManager.saveSession(
                             token = loginData.token,
                             name = loginData.user.name,
@@ -98,7 +92,6 @@ class LoginActivity : AppCompatActivity() {
 
                         Toast.makeText(this, "Selamat datang, ${loginData.user.name}!", Toast.LENGTH_SHORT).show()
 
-                        // Navigasi ke halaman utama Dashboard
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                         finish()
@@ -107,8 +100,7 @@ class LoginActivity : AppCompatActivity() {
                 is LoginResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnLogin.isEnabled = true
-                    // Sesuai dengan spesifikasi SDD, tampilkan pesan error via Snackbar
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

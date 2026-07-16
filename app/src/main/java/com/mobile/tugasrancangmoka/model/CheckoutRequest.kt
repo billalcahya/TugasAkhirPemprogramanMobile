@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class CheckoutRequest(
     @SerializedName("items") val items: List<CheckoutItem>,
     @SerializedName("discountAmount") val discountAmount: Double,
-    @SerializedName("paymentMethod") val paymentMethod: String, // 'cash' atau 'non_cash'
+    @SerializedName("paymentMethod") val paymentMethod: String,
     @SerializedName("paymentAmount") val paymentAmount: Double
 )
 

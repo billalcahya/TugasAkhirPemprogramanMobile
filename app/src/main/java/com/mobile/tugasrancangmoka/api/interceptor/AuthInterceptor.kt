@@ -12,7 +12,6 @@ import okhttp3.Response
 
 class AuthInterceptor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        // Ambil token dari SharedPreferences (diatur oleh SessionManager)
         val sharedPreferences = context.getSharedPreferences("smartcafe_prefs", Context.MODE_PRIVATE)
         val token = sharedPreferences.getString("jwt_token", null)
 
@@ -23,16 +22,13 @@ class AuthInterceptor(private val context: Context) : Interceptor {
 
         val response = chain.proceed(requestBuilder.build())
 
-        // Jika respons 401 Unauthorized (token kadaluarsa/tidak valid)
         if (response.code == 401) {
             val requestUrl = chain.request().url.toString()
-            // Hindari memproses response dari endpoint login sendiri
             if (!requestUrl.contains("auth/login")) {
                 val sessionManager = SessionManager(context)
                 if (sessionManager.getToken() != null) {
                     sessionManager.clearSession()
 
-                    // Jalankan di thread utama untuk interaksi UI (Toast & Start Activity)
                     Handler(Looper.getMainLooper()).post {
                         Toast.makeText(
                             context,

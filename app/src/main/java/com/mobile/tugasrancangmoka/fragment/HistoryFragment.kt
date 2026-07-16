@@ -106,7 +106,6 @@ class HistoryFragment : Fragment() {
                 is HistoryResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     
-                    // Lakukan filter lokal berdasarkan status transaksi yang dipilih
                     val filteredList = if (currentFilter.isNullOrEmpty()) {
                         result.list
                     } else {
@@ -128,7 +127,7 @@ class HistoryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.textEmptyState.visibility = View.VISIBLE
                     binding.textEmptyState.text = result.message
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -146,7 +145,7 @@ class HistoryFragment : Fragment() {
                 }
                 is DetailResult.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                     viewModel.clearDetailState()
                 }
             }
@@ -163,7 +162,6 @@ class HistoryFragment : Fragment() {
                     Toast.makeText(requireContext(), "Transaction voided successfully", Toast.LENGTH_SHORT).show()
                     viewModel.fetchTransactionHistory(currentFilter)
                     
-                    // Refresh data dashboard agar data terbaru muncul
                     try {
                         val dashboardVM = ViewModelProvider(requireActivity())[DashboardVM::class.java]
                         dashboardVM.fetchDashboard()
@@ -175,7 +173,7 @@ class HistoryFragment : Fragment() {
                 }
                 is VoidResult.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                     viewModel.clearVoidState()
                 }
             }
@@ -190,7 +188,6 @@ class HistoryFragment : Fragment() {
 
         dialogBinding.textDetailCode.text = record.transactionCode
 
-        // Format Date
         try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
@@ -200,7 +197,6 @@ class HistoryFragment : Fragment() {
             dialogBinding.textDetailDate.text = record.createdAt
         }
 
-        // Format currencies
         val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         currencyFormatter.maximumFractionDigits = 0
 

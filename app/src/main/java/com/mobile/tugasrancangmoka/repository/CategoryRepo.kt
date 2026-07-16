@@ -7,7 +7,7 @@ import com.mobile.tugasrancangmoka.model.CategoryRequest
 import retrofit2.Response
 
 class CategoryRepo(val apiService: ApiService) {
-    suspend fun getCategories(): Response<List<Category>> { // Diubah di sini
+    suspend fun getCategories(): Response<List<Category>> {
         return apiService.getCategories()
     }
 

@@ -30,57 +30,59 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
     val updateStockState: LiveData<UpdateStockResult?> = _updateStockState
 
     fun fetchStock(categoryId: Int? = null, search: String? = null) {
-        _inventoryState.value = InventoryResult.Loading
+        _inventoryState.postValue(InventoryResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getProducts(categoryId, search)
                 val body = response.body()
 
                 if (response.isSuccessful && body != null && body.data != null) {
-                    _inventoryState.value = InventoryResult.Success(body.data)
+                    _inventoryState.postValue(InventoryResult.Success(body.data))
                 } else {
-                    _inventoryState.value = InventoryResult.Error("Gagal memuat stok barang")
+                    _inventoryState.postValue(InventoryResult.Error("Gagal memuat stok barang"))
                 }
             } catch (e: Exception) {
-                _inventoryState.value = InventoryResult.Error("Kesalahan koneksi internet: ${e.message}")
+                _inventoryState.postValue(InventoryResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun updateProductStock(id: Int, newStock: Int) {
-        _updateStockState.value = UpdateStockResult.Loading
+        _updateStockState.postValue(UpdateStockResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.updateStock(id, newStock)
                 if (response.isSuccessful && response.body()?.data != null) {
-                    _updateStockState.value = UpdateStockResult.Success(response.body()?.data!!)
+                    _updateStockState.postValue(UpdateStockResult.Success(response.body()?.data!!))
                     fetchStock()
                 } else {
                     if (response.code() == 404) {
-                        _updateStockState.value = UpdateStockResult.Success(
-                            InventoryItem(
-                                id = id,
-                                productId = id,
-                                buyPrice = 0.0,
-                                sellPrice = 0.0,
-                                imageUrl = null,
-                                isActive = true,
-                                stock = newStock,
-                                nestedProduct = NestedProduct(name = "Simulated")
+                        _updateStockState.postValue(
+                            UpdateStockResult.Success(
+                                InventoryItem(
+                                    id = id,
+                                    productId = id,
+                                    buyPrice = 0.0,
+                                    sellPrice = 0.0,
+                                    imageUrl = null,
+                                    isActive = true,
+                                    stock = newStock,
+                                    nestedProduct = NestedProduct(name = "Simulated")
+                                )
                             )
                         )
                         fetchStock()
                     } else {
-                        _updateStockState.value = UpdateStockResult.Error("Gagal memperbarui stok")
+                        _updateStockState.postValue(UpdateStockResult.Error("Gagal memperbarui stok"))
                     }
                 }
             } catch (e: Exception) {
-                _updateStockState.value = UpdateStockResult.Error("Kesalahan koneksi internet: ${e.message}")
+                _updateStockState.postValue(UpdateStockResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun resetUpdateState() {
-        _updateStockState.value = null
+        _updateStockState.postValue(null)
     }
 }

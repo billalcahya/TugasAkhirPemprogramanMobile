@@ -25,7 +25,7 @@ data class TransactionRecord(
     val status: String, // 'completed' atau 'voided'
     @SerializedName("void_reason") val voidReason: String?,
     @SerializedName("created_at") val createdAt: String,
-    val items: List<TransactionDetailItem>? // Hanya terisi saat mengambil detail
+    val items: List<TransactionDetailItem>?
 )
 
 data class TransactionDetailItem(

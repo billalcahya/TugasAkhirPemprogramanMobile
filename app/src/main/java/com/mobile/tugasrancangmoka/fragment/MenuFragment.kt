@@ -95,7 +95,7 @@ class MenuFragment : Fragment() {
                     binding.rvCategories.adapter = CategoryAdapter(fullList)
                 }
                 is CategoryResult.Error -> {
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -124,7 +124,7 @@ class MenuFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.textEmptyState.visibility = View.VISIBLE
                     binding.textEmptyState.text = result.message
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

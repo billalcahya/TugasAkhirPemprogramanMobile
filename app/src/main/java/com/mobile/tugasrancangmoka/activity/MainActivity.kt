@@ -14,7 +14,7 @@ import com.mobile.tugasrancangmoka.utils.SessionManager // 1. Import SessionMana
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var sessionManager: SessionManager // 2. Deklarasikan SessionManager
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

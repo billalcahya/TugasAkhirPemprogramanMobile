@@ -38,23 +38,23 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
     val voidState: LiveData<VoidResult?> = _voidState
 
     fun fetchTransactionHistory(status: String? = null) {
-        _historyState.value = HistoryResult.Loading
+        _historyState.postValue(HistoryResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getTransactions(status)
                 if (response.isSuccessful && response.body() != null) {
-                    _historyState.value = HistoryResult.Success(response.body()?.data.orEmpty())
+                    _historyState.postValue(HistoryResult.Success(response.body()?.data.orEmpty()))
                 } else {
-                    _historyState.value = HistoryResult.Error("Gagal memuat riwayat transaksi")
+                    _historyState.postValue(HistoryResult.Error("Gagal memuat riwayat transaksi"))
                 }
             } catch (e: Exception) {
-                _historyState.value = HistoryResult.Error("Koneksi bermasalah: ${e.message}")
+                _historyState.postValue(HistoryResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun fetchTransactionDetail(id: Int) {
-        _detailState.value = DetailResult.Loading
+        _detailState.postValue(DetailResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getTransactionDetail(id)
@@ -62,37 +62,37 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
 
                 if (response.isSuccessful && body != null && !body.data.isNullOrEmpty()) {
                     val transactionRecord = body.data.first()
-                    _detailState.value = DetailResult.Success(transactionRecord)
+                    _detailState.postValue(DetailResult.Success(transactionRecord))
                 } else {
-                    _detailState.value = DetailResult.Error("Gagal memuat detail transaksi")
+                    _detailState.postValue(DetailResult.Error("Gagal memuat detail transaksi"))
                 }
             } catch (e: Exception) {
-                _detailState.value = DetailResult.Error("Terjadi kesalahan jaringan: ${e.message}")
+                _detailState.postValue(DetailResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun voidTransaction(id: Int, reason: String) {
-        _voidState.value = VoidResult.Loading
+        _voidState.postValue(VoidResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.voidTransaction(id, reason)
                 if (response.isSuccessful) {
-                    _voidState.value = VoidResult.Success
+                    _voidState.postValue(VoidResult.Success)
                 } else {
-                    _voidState.value = VoidResult.Error("Gagal membatalkan transaksi")
+                    _voidState.postValue(VoidResult.Error("Gagal membatalkan transaksi"))
                 }
             } catch (e: Exception) {
-                _voidState.value = VoidResult.Error("Koneksi gagal: ${e.message}")
+                _voidState.postValue(VoidResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun clearDetailState() {
-        _detailState.value = null
+        _detailState.postValue(null)
     }
 
     fun clearVoidState() {
-        _voidState.value = null
+        _voidState.postValue(null)
     }
 }

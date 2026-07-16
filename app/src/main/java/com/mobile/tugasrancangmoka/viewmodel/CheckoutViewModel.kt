@@ -19,13 +19,14 @@ sealed class CheckoutResult {
 class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
     private val _checkoutState = MutableLiveData<CheckoutResult>()
     val checkoutState: LiveData<CheckoutResult> = _checkoutState
+
     fun processCheckout(
         cartItems: List<com.mobile.tugasrancangmoka.model.CartItem>,
         discount: Double,
         paymentMethod: String,
         paymentAmount: Double
     ) {
-        _checkoutState.value = CheckoutResult.Loading
+        _checkoutState.postValue(CheckoutResult.Loading)
 
         val checkoutItems = cartItems.map {
             CheckoutItem(productId = it.product.id ?: 0, quantity = it.quantity)
@@ -42,14 +43,13 @@ class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
             try {
                 val response = repository.checkout(request)
                 if (response.isSuccessful && response.body() != null) {
-                    _checkoutState.value = CheckoutResult.Success(response.body()!!)
+                    _checkoutState.postValue(CheckoutResult.Success(response.body()!!))
                 } else {
-                    // Menangkap pesan error spesifik dari backend (misal: "Stok tidak mencukupi")
                     val errorMsg = response.errorBody()?.string() ?: "Transaksi gagal diproses"
-                    _checkoutState.value = CheckoutResult.Error(errorMsg)
+                    _checkoutState.postValue(CheckoutResult.Error(errorMsg))
                 }
             } catch (e: Exception) {
-                _checkoutState.value = CheckoutResult.Error("Masalah jaringan: ${e.message}")
+                _checkoutState.postValue(CheckoutResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }

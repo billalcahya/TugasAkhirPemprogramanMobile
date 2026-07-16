@@ -21,17 +21,17 @@ class AuthVM(private val repository: AuthRepo) : ViewModel() {
     val loginState: LiveData<LoginResult> = _loginState
 
     fun loginUser(request: LoginRequest) {
-        _loginState.value = LoginResult.Loading
+        _loginState.postValue(LoginResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.login(request)
                 if (response.isSuccessful && response.body() != null) {
-                    _loginState.value = LoginResult.Success(response.body()!!)
+                    _loginState.postValue(LoginResult.Success(response.body()!!))
                 } else {
-                    _loginState.value = LoginResult.Error("Email atau password salah")
+                    _loginState.postValue(LoginResult.Error("Email atau password salah"))
                 }
             } catch (e: Exception) {
-                _loginState.value = LoginResult.Error("Koneksi gagal: ${e.message}")
+                _loginState.postValue(LoginResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }

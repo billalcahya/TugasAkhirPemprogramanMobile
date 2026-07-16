@@ -18,7 +18,7 @@ class ProductRepo(private val apiService: ApiService) {
     suspend fun addProductMultipart(
         productData: Part,
         productImage: Part?
-    ): Response<SingleProductResponse> { // Sesuaikan tipe data response-nya dengan yang ada di ApiService
+    ): Response<SingleProductResponse> {
         return apiService.addProductMultipart(productData, productImage)
     }
 }

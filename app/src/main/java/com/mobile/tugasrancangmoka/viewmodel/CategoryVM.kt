@@ -20,18 +20,17 @@ class CategoryVM(private val repository: CategoryRepo) : ViewModel() {
     val categoryState: LiveData<CategoryResult> = _categoryState
 
     fun fetchCategories() {
-        _categoryState.value = CategoryResult.Loading
+        _categoryState.postValue(CategoryResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getCategories()
                 if (response.isSuccessful && response.body() != null) {
-                    // Langsung ambil response.body() tanpa memanggil .data
-                    _categoryState.value = CategoryResult.Success(response.body()!!)
+                    _categoryState.postValue(CategoryResult.Success(response.body()!!))
                 } else {
-                    _categoryState.value = CategoryResult.Error("Gagal mengambil data kategori")
+                    _categoryState.postValue(CategoryResult.Error("Gagal mengambil data kategori"))
                 }
             } catch (e: Exception) {
-                _categoryState.value = CategoryResult.Error("Kesalahan jaringan: ${e.message}")
+                _categoryState.postValue(CategoryResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }

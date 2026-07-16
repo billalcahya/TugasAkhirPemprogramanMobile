@@ -20,34 +20,34 @@ class ReportVM(private val repository: ReportRepo) : ViewModel() {
     val reportState: LiveData<ReportResult> = _reportState
 
     fun fetchDailyReport(date: String) {
-        _reportState.value = ReportResult.Loading
+        _reportState.postValue(ReportResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getDailyReport(date)
                 handleResponse(response)
             } catch (e: Exception) {
-                _reportState.value = ReportResult.Error("Kesalahan jaringan: ${e.message}")
+                _reportState.postValue(ReportResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     fun fetchMonthlyReport(month: String) {
-        _reportState.value = ReportResult.Loading
+        _reportState.postValue(ReportResult.Loading)
         viewModelScope.launch {
             try {
                 val response = repository.getMonthlyReport(month)
                 handleResponse(response)
             } catch (e: Exception) {
-                _reportState.value = ReportResult.Error("Kesalahan jaringan: ${e.message}")
+                _reportState.postValue(ReportResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))
             }
         }
     }
 
     private fun handleResponse(response: retrofit2.Response<ReportResponse>) {
         if (response.isSuccessful && response.body() != null) {
-            _reportState.value = ReportResult.Success(response.body()!!)
+            _reportState.postValue(ReportResult.Success(response.body()!!))
         } else {
-            _reportState.value = ReportResult.Error("Gagal memproses dokumen laporan")
+            _reportState.postValue(ReportResult.Error("Gagal memproses dokumen laporan"))
         }
     }
 }

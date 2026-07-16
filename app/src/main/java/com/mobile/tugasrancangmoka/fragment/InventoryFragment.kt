@@ -97,7 +97,7 @@ class InventoryFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.textEmptyState.visibility = View.VISIBLE
                     binding.textEmptyState.text = result.message
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -115,7 +115,7 @@ class InventoryFragment : Fragment() {
                 }
                 is UpdateStockResult.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                     viewModel.resetUpdateState()
                 }
             }
@@ -136,7 +136,7 @@ class InventoryFragment : Fragment() {
             val value = input.text.toString().trim()
             val newStock = value.toIntOrNull()
             if (newStock != null) {
-                viewModel.updateProductStock(product.id, newStock) // Menggunakan inventory id primer untuk mencocokkan endpoint PUT /inventory/:id
+                viewModel.updateProductStock(product.id, newStock)
             } else {
                 Toast.makeText(requireContext(), "Invalid stock amount", Toast.LENGTH_SHORT).show()
             }

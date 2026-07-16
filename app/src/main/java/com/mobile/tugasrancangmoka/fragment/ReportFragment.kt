@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -50,6 +51,12 @@ class ReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val utcTimeZone = TimeZone.getTimeZone("UTC")
+        dailyDateFormatter.timeZone = utcTimeZone
+        monthlyDateFormatter.timeZone = utcTimeZone
+        displayDailyFormatter.timeZone = utcTimeZone
+        displayMonthlyFormatter.timeZone = utcTimeZone
 
         val apiService = ApiClient.getApiService(requireContext())
         val repository = ReportRepo(apiService)
@@ -139,7 +146,7 @@ class ReportFragment : Fragment() {
                 is ReportResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.cardChart.visibility = View.INVISIBLE
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -14,7 +14,7 @@ data class InventoryItem(
     @SerializedName("sell_price") val sellPrice: Double,
     @SerializedName("image_url") val imageUrl: String?,
     @SerializedName("is_active") val isActive: Boolean,
-    @SerializedName("current_stock") val stock: Int, // Menangkap current_stock dari /inventory
+    @SerializedName("current_stock") val stock: Int,
     val unit: String? = null,
     @SerializedName("products") val nestedProduct: NestedProduct?
 ) {
@@ -29,5 +29,5 @@ data class NestedProduct(
 data class SingleInventoryResponse(
     @SerializedName("status") val status: String,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val data: InventoryItem // Berisi satu objek inventori yang diperbarui
+    @SerializedName("data") val data: InventoryItem
 )

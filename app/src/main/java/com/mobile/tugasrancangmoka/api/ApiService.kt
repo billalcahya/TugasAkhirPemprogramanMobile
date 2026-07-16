@@ -86,11 +86,11 @@ interface ApiService {
         @Body request: CheckoutRequest
     ): Response<CheckoutResponse>
 
-    @PUT("inventory/{id}") // Diubah sesuai rute router.put('/:id') pada inventoryRoutes
+    @PUT("inventory/{id}")
     suspend fun updateStock(
         @Path("id") id: Int,
         @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
-    ): Response<com.mobile.tugasrancangmoka.model.SingleInventoryResponse> // Mengembalikan SingleInventoryResponse atau sesuaikan dengan pembungkus object InventoryItem
+    ): Response<com.mobile.tugasrancangmoka.model.SingleInventoryResponse>
 
     @GET("inventory")
     suspend fun getInventory(
@@ -119,12 +119,12 @@ interface ApiService {
 
     @GET("reports/daily")
     suspend fun getDailyReport(
-        @Query("date") date: String // format: YYYY-MM-DD
+        @Query("date") date: String
     ): Response<ReportResponse>
 
     @GET("reports/monthly")
     suspend fun getMonthlyReport(
-        @Query("month") month: String // format: YYYY-MM
+        @Query("month") month: String
     ): Response<ReportResponse>
 
     @GET("profile/all")

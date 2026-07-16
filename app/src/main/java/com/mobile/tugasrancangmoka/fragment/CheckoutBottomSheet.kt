@@ -14,6 +14,7 @@ import com.mobile.tugasrancangmoka.R
 import com.mobile.tugasrancangmoka.api.ApiClient
 import com.mobile.tugasrancangmoka.databinding.BottomSheetCheckoutBinding
 import com.mobile.tugasrancangmoka.repository.TransactionRepo
+import com.mobile.tugasrancangmoka.repository.DashboardRepo
 import com.mobile.tugasrancangmoka.viewmodel.CheckoutResult
 import com.mobile.tugasrancangmoka.viewmodel.CheckoutViewModel
 import com.mobile.tugasrancangmoka.viewmodel.DashboardVM
@@ -52,7 +53,6 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
         val apiService = ApiClient.getApiService(requireContext())
         val transactionRepo = TransactionRepo(apiService)
 
-        // Ambil POSViewModel dari Activity scope agar cart data didapatkan
         posViewModel = ViewModelProvider(requireActivity())[POSViewModel::class.java]
 
         val factory = ViewModelFactory(transactionRepo)
@@ -142,9 +142,11 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
                     val currentCartItems = posViewModel.cartItems.value.orEmpty().toList()
                     posViewModel.clearCart()
                     
-                    // Refresh data dashboard agar data terbaru muncul
                     try {
-                        val dashboardVM = ViewModelProvider(requireActivity())[DashboardVM::class.java]
+                        val apiService = ApiClient.getApiService(requireContext())
+                        val dashboardRepo = DashboardRepo(apiService)
+                        val factory = ViewModelFactory(dashboardRepo)
+                        val dashboardVM = ViewModelProvider(requireActivity(), factory)[DashboardVM::class.java]
                         dashboardVM.fetchDashboard()
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -158,7 +160,7 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
                 is CheckoutResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSubmitPayment.isEnabled = true
-                    Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

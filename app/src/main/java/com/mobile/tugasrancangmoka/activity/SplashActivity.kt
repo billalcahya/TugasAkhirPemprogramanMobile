@@ -25,7 +25,6 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
-        // Navigate after 3000ms (3 seconds)
         Handler(Looper.getMainLooper()).postDelayed({
             val targetClass = if (!sessionManager.getToken().isNullOrEmpty()) {
                 MainActivity::class.java

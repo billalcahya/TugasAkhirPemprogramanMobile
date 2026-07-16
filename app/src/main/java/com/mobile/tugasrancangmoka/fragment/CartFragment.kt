@@ -27,6 +27,7 @@ class CartFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var posViewModel: POSViewModel
+    private lateinit var cartAdapter: CartItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +43,6 @@ class CartFragment : Fragment() {
         val apiService = ApiClient.getApiService(requireContext())
         val productRepo = ProductRepo(apiService)
 
-        // Gunakan activity scope agar data cart sinkron
         val factory = ViewModelFactory(productRepo)
         posViewModel = ViewModelProvider(requireActivity(), factory)[POSViewModel::class.java]
 
@@ -53,6 +53,11 @@ class CartFragment : Fragment() {
 
     private fun setupRecyclerView() {
         binding.rvCartItems.layoutManager = LinearLayoutManager(requireContext())
+        cartAdapter = CartItemAdapter(emptyList(),
+            onIncrease = { posViewModel.addToCart(it) },
+            onDecrease = { posViewModel.decreaseQuantity(it) }
+        )
+        binding.rvCartItems.adapter = cartAdapter
     }
 
     private fun observeViewModel() {
@@ -65,13 +70,9 @@ class CartFragment : Fragment() {
                 binding.rvCartItems.visibility = View.VISIBLE
                 binding.textEmptyCart.visibility = View.GONE
                 binding.btnCheckout.isEnabled = true
-                binding.rvCartItems.adapter = CartItemAdapter(items,
-                    onIncrease = { posViewModel.addToCart(it) },
-                    onDecrease = { posViewModel.decreaseQuantity(it) }
-                )
+                cartAdapter.updateData(items)
             }
 
-            // Update Total
             val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
             formatter.maximumFractionDigits = 0
             binding.textTotalPrice.text = formatter.format(posViewModel.getTotalPayment())
@@ -94,9 +95,8 @@ class CartFragment : Fragment() {
         _binding = null
     }
 
-    // Inner Adapter untuk Cart Items
     private class CartItemAdapter(
-        private val list: List<CartItem>,
+        private var list: List<CartItem>,
         private val onIncrease: (Product) -> Unit,
         private val onDecrease: (Product) -> Unit
     ) : RecyclerView.Adapter<CartItemAdapter.ViewHolder>() {
@@ -108,6 +108,11 @@ class CartFragment : Fragment() {
             val textSubtotal: TextView = view.findViewById(R.id.text_cart_subtotal)
             val btnIncrease: MaterialButton = view.findViewById(R.id.btn_increase)
             val btnDecrease: MaterialButton = view.findViewById(R.id.btn_decrease)
+        }
+
+        fun updateData(newList: List<CartItem>) {
+            this.list = newList
+            notifyDataSetChanged()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
