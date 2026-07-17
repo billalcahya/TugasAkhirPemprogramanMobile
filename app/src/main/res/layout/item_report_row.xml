@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="4dp"
+    android:weightSum="10">
+
+    <TextView
+        android:id="@+id/text_row_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.8"
+        android:text="2026-07-16"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        android:fontFamily="sans-serif-medium" />
+
+    <TextView
+        android:id="@+id/text_row_txs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.7"
+        android:text="15"
+        android:gravity="center"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        android:fontFamily="sans-serif" />
+
+    <TextView
+        android:id="@+id/text_row_revenue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.7"
+        android:text="Rp 1.250.000"
+        android:gravity="end"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        android:fontFamily="sans-serif" />
+
+    <TextView
+        android:id="@+id/text_row_profit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.8"
+        android:text="Rp 500.000"
+        android:gravity="end"
+        android:textColor="@color/active_green"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium" />
+
+</LinearLayout>

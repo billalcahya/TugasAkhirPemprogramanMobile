@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.*
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -121,31 +124,62 @@ class ReportFragment : Fragment() {
                 is ReportResult.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.cardChart.visibility = View.INVISIBLE
+                    binding.cardBreakdown.visibility = View.GONE
                 }
                 is ReportResult.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.cardChart.visibility = View.VISIBLE
+                    binding.cardBreakdown.visibility = View.VISIBLE
 
                     val reportList = result.response.data
                     if (!reportList.isNullOrEmpty()) {
-                        val totalRevenue = reportList.sumOf { it.totalRevenue }
-                        val grossProfit = reportList.sumOf { it.grossProfit }
+                        // Format selected date for matching (e.g. "2026-07-16")
+                        val selectedStr = if (isDailyMode) {
+                            dailyDateFormatter.format(selectedDate)
+                        } else {
+                            monthlyDateFormatter.format(selectedDate)
+                        }
+
+                        // Filter items up to the selected date/month for the chart and table
+                        val filteredHistory = reportList.filter { item ->
+                            val itemKey = if (isDailyMode) item.date else item.month
+                            itemKey != null && itemKey <= selectedStr
+                        }.sortedBy { if (isDailyMode) it.date else it.month }
+
+                        // Find the exact selected item for the metrics card (Revenue & Profit)
+                        val selectedItem = reportList.find { item ->
+                            val itemKey = if (isDailyMode) item.date else item.month
+                            itemKey != null && itemKey.startsWith(selectedStr)
+                        }
+
+                        val totalRevenue = selectedItem?.totalRevenue ?: 0.0
+                        val grossProfit = selectedItem?.grossProfit ?: 0.0
 
                         val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
                         formatter.maximumFractionDigits = 0
                         binding.textReportRevenue.text = formatter.format(totalRevenue)
                         binding.textReportMargin.text = formatter.format(grossProfit)
 
-                        setupChart(reportList)
+                        if (filteredHistory.isNotEmpty()) {
+                            setupChart(filteredHistory)
+                            setupBreakdownList(filteredHistory.reversed()) // Show newest first in table
+                        } else {
+                            binding.reportChart.clear()
+                            binding.rvReportBreakdown.visibility = View.GONE
+                            binding.textEmptyBreakdown.visibility = View.VISIBLE
+                        }
                     } else {
-                        binding.textReportRevenue.text = "Rp0"
-                        binding.textReportMargin.text = "Rp0"
+                        binding.textReportRevenue.text = "Rp 0"
+                        binding.textReportMargin.text = "Rp 0"
                         binding.reportChart.clear()
+                        binding.rvReportBreakdown.visibility = View.GONE
+                        binding.textEmptyBreakdown.visibility = View.VISIBLE
                     }
                 }
                 is ReportResult.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.cardChart.visibility = View.INVISIBLE
+                    binding.cardBreakdown.visibility = View.GONE
                     Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -208,5 +242,48 @@ class ReportFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupBreakdownList(reportList: List<com.mobile.tugasrancangmoka.model.ReportData>) {
+        binding.rvReportBreakdown.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        binding.rvReportBreakdown.adapter = ReportBreakdownAdapter(reportList)
+        binding.rvReportBreakdown.visibility = View.VISIBLE
+        binding.textEmptyBreakdown.visibility = View.GONE
+    }
+
+    private class ReportBreakdownAdapter(private val list: List<com.mobile.tugasrancangmoka.model.ReportData>) :
+        Adapter<ReportBreakdownAdapter.ViewHolder>() {
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val textDate: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_date)
+            val textTxs: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_txs)
+            val textRevenue: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_revenue)
+            val textProfit: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_profit)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(com.mobile.tugasrancangmoka.R.layout.item_report_row, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = list[position]
+            holder.textDate.text = item.date ?: item.month ?: "-"
+            holder.textTxs.text = item.totalTransactions.toString()
+
+            val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
+            formatter.maximumFractionDigits = 0
+            holder.textRevenue.text = formatter.format(item.totalRevenue)
+            holder.textProfit.text = formatter.format(item.grossProfit)
+
+            if (item.grossProfit < 0) {
+                holder.textProfit.setTextColor(holder.itemView.context.getColor(com.mobile.tugasrancangmoka.R.color.red_strong))
+            } else {
+                holder.textProfit.setTextColor(holder.itemView.context.getColor(com.mobile.tugasrancangmoka.R.color.active_green))
+            }
+        }
+
+        override fun getItemCount() = list.size
     }
 }

@@ -36,4 +36,19 @@
 
     <color name="switch_thumb_off">#E0E0E0</color>
     <color name="switch_track_off">#9E9E9E</color>
+
+    <!-- Earthy Minimalist Dashboard Color Palette -->
+    <color name="earth_dark_brown">#352219</color>
+    <color name="earth_cream_light">#DFC5B2</color>
+    <color name="earth_gold">#FFD54F</color>
+    <color name="peach_light">#FFE5D9</color>
+    <color name="peach_dark">#A04000</color>
+    <color name="earth_light_grey">#F5F2EB</color>
+    <color name="earth_dark_grey">#5D4037</color>
+    <color name="green_pastel_light">#E8F8F5</color>
+    <color name="active_green">#27AE60</color>
+    <color name="orange_strong">#E67E22</color>
+    <color name="orange_light">#FFF3E0</color>
+    <color name="red_strong">#E74C3C</color>
+    <color name="red_light_faded">#FDEDEC</color>
 </resources>

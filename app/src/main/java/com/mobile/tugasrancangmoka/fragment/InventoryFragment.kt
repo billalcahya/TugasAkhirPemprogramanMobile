@@ -34,6 +34,7 @@ class InventoryFragment : Fragment() {
 
     private lateinit var viewModel: InventoryViewModel
     private var searchQuery: String? = null
+    private var fullInventoryList: List<InventoryItem> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +56,15 @@ class InventoryFragment : Fragment() {
         setupSearch()
         observeViewModel()
 
-        viewModel.fetchStock(search = searchQuery)
+        // Check for pending restock search from Dashboard
+        val sharedPrefs = requireContext().getSharedPreferences("DashboardPrefs", android.content.Context.MODE_PRIVATE)
+        val pendingSearch = sharedPrefs.getString("pending_restock_search", null)
+        if (!pendingSearch.isNullOrEmpty()) {
+            sharedPrefs.edit().remove("pending_restock_search").apply()
+            binding.editSearch.setText(pendingSearch)
+        }
+
+        viewModel.fetchStock()
     }
 
     private fun setupRecyclerView() {
@@ -67,10 +76,33 @@ class InventoryFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchQuery = if (s.isNullOrEmpty()) null else s.toString().trim()
-                viewModel.fetchStock(search = searchQuery)
+                filterAndDisplayStock()
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    private fun filterAndDisplayStock() {
+        val query = searchQuery
+        val filteredList = if (query.isNullOrEmpty()) {
+            fullInventoryList
+        } else {
+            fullInventoryList.filter { item ->
+                item.name.contains(query, ignoreCase = true)
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            binding.rvInventory.visibility = View.GONE
+            binding.textEmptyState.visibility = View.VISIBLE
+            binding.textEmptyState.text = "No products found"
+        } else {
+            binding.rvInventory.visibility = View.VISIBLE
+            binding.textEmptyState.visibility = View.GONE
+            binding.rvInventory.adapter = InventoryAdapter(filteredList) { item ->
+                showUpdateStockDialog(item)
+            }
+        }
     }
 
     private fun observeViewModel() {
@@ -82,16 +114,8 @@ class InventoryFragment : Fragment() {
                 }
                 is InventoryResult.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    if (result.products.isEmpty()) {
-                        binding.rvInventory.visibility = View.GONE
-                        binding.textEmptyState.visibility = View.VISIBLE
-                    } else {
-                        binding.rvInventory.visibility = View.VISIBLE
-                        binding.textEmptyState.visibility = View.GONE
-                        binding.rvInventory.adapter = InventoryAdapter(result.products) { item ->
-                            showUpdateStockDialog(item)
-                        }
-                    }
+                    fullInventoryList = result.products
+                    filterAndDisplayStock()
                 }
                 is InventoryResult.Error -> {
                     binding.progressBar.visibility = View.GONE
