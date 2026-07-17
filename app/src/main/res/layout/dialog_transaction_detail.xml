@@ -42,7 +42,6 @@
             android:background="@drawable/bg_status_completed"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Items purchased title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,7 +50,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Items Container -->
         <LinearLayout
             android:id="@+id/layout_detail_items"
             android:layout_width="match_parent"
@@ -59,14 +57,12 @@
             android:orientation="vertical"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/outline_variant"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Calculations -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -126,7 +122,6 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
-        <!-- Void reason description (if voided) -->
         <LinearLayout
             android:id="@+id/layout_void_info"
             android:layout_width="match_parent"
@@ -149,7 +144,6 @@
                 android:textColor="@color/on_surface_variant"/>
         </LinearLayout>
 
-        <!-- Action Buttons -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_void_transaction"
             style="@style/Widget.MaterialComponents.Button"

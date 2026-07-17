@@ -89,7 +89,6 @@
         android:gravity="center_vertical"
         android:layout_marginBottom="16dp">
 
-        <!-- Area Pratinjau Gambar -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -107,7 +106,6 @@
                 />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Tombol Unggah -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUploadImage"
             style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -120,7 +118,6 @@
             app:iconTint="#553722"/>
     </LinearLayout>
 
-    <!-- Spinner untuk memilih kategori id produk -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,7 +130,6 @@
         android:layout_height="48dp"
         android:layout_marginBottom="12dp"/>
 
-<!--     Spinner untuk memilih unit produk -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

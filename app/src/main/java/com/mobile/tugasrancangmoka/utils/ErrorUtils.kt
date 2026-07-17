@@ -7,10 +7,6 @@ import java.net.UnknownHostException
 import retrofit2.HttpException
 
 object ErrorUtils {
-    /**
-     * Mengubah exception/throwable menjadi pesan error bahasa Indonesia yang sederhana
-     * dan mudah dipahami oleh pengguna.
-     */
     fun getFriendlyMessage(e: Throwable): String {
         return when (e) {
             is UnknownHostException, is ConnectException -> {
@@ -57,9 +53,6 @@ object ErrorUtils {
         }
     }
 
-    /**
-     * Mengubah response error JSON dari API menjadi pesan bahasa Indonesia yang ramah pengguna.
-     */
     fun parseApiError(errorBodyString: String?): String {
         if (errorBodyString.isNullOrBlank()) {
             return "Transaksi gagal diproses"

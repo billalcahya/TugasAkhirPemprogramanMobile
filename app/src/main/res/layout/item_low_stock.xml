@@ -6,7 +6,6 @@
     android:paddingVertical="12dp"
     android:paddingHorizontal="4dp">
 
-    <!-- Left Side: Product Info -->
     <LinearLayout
         android:id="@+id/layout_product_info"
         android:layout_width="0dp"
@@ -38,7 +37,6 @@
             android:fontFamily="sans-serif" />
     </LinearLayout>
 
-    <!-- Right Side: Restock Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_restock"
         style="@style/Widget.Material3.Button"

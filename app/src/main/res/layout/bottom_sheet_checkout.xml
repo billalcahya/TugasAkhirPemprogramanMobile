@@ -28,7 +28,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="24dp"/>
 
-        <!-- Calculations -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +47,6 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
-        <!-- Discount Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_discount"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -71,7 +69,6 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Tax -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,14 +88,12 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
-        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/outline_variant"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Grand Total -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,7 +116,6 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
-        <!-- Payment Method -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,7 +147,6 @@
                 android:text="Non-Cash"/>
         </RadioGroup>
 
-        <!-- Payment Amount Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_payment_amount"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -176,7 +169,6 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Change Amount -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -196,7 +188,6 @@
                 android:textStyle="bold"/>
         </RelativeLayout>
 
-        <!-- Pay Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit_payment"
             style="@style/Widget.MaterialComponents.Button"

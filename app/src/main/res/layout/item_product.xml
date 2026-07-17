@@ -57,7 +57,6 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
-                <!-- A little circular add button in the card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="28dp"
                     android:layout_height="28dp"

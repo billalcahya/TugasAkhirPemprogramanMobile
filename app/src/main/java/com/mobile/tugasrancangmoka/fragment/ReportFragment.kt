@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.mobile.tugasrancangmoka.R
 import com.mobile.tugasrancangmoka.api.ApiClient
 import com.mobile.tugasrancangmoka.databinding.FragmentReportBinding
+import com.mobile.tugasrancangmoka.model.ReportData
 import com.mobile.tugasrancangmoka.repository.ReportRepo
 import com.mobile.tugasrancangmoka.viewmodel.ReportResult
 import com.mobile.tugasrancangmoka.viewmodel.ReportVM
@@ -122,31 +123,31 @@ class ReportFragment : Fragment() {
         viewModel.reportState.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is ReportResult.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.cardChart.visibility = View.INVISIBLE
-                    binding.cardBreakdown.visibility = View.GONE
+                    binding.layoutReportSkeleton.visibility = VISIBLE
+                    binding.layoutMetrics.visibility = GONE
+                    binding.cardChart.visibility = GONE
+                    binding.cardBreakdown.visibility = GONE
+                    binding.progressBar.visibility = GONE
                 }
                 is ReportResult.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.cardChart.visibility = View.VISIBLE
-                    binding.cardBreakdown.visibility = View.VISIBLE
+                    binding.layoutReportSkeleton.visibility = GONE
+                    binding.layoutMetrics.visibility = VISIBLE
+                    binding.cardChart.visibility = VISIBLE
+                    binding.cardBreakdown.visibility = VISIBLE
 
                     val reportList = result.response.data
                     if (!reportList.isNullOrEmpty()) {
-                        // Format selected date for matching (e.g. "2026-07-16")
                         val selectedStr = if (isDailyMode) {
                             dailyDateFormatter.format(selectedDate)
                         } else {
                             monthlyDateFormatter.format(selectedDate)
                         }
 
-                        // Filter items up to the selected date/month for the chart and table
                         val filteredHistory = reportList.filter { item ->
                             val itemKey = if (isDailyMode) item.date else item.month
                             itemKey != null && itemKey <= selectedStr
                         }.sortedBy { if (isDailyMode) it.date else it.month }
 
-                        // Find the exact selected item for the metrics card (Revenue & Profit)
                         val selectedItem = reportList.find { item ->
                             val itemKey = if (isDailyMode) item.date else item.month
                             itemKey != null && itemKey.startsWith(selectedStr)
@@ -161,32 +162,39 @@ class ReportFragment : Fragment() {
                         binding.textReportMargin.text = formatter.format(grossProfit)
 
                         if (filteredHistory.isNotEmpty()) {
-                            setupChart(filteredHistory)
-                            setupBreakdownList(filteredHistory.reversed()) // Show newest first in table
+                            val chartList = if (filteredHistory.size > 10) {
+                                filteredHistory.takeLast(10)
+                            } else {
+                                filteredHistory
+                            }
+                            setupChart(chartList)
+                            setupBreakdownList(filteredHistory.reversed())
                         } else {
                             binding.reportChart.clear()
-                            binding.rvReportBreakdown.visibility = View.GONE
-                            binding.textEmptyBreakdown.visibility = View.VISIBLE
+                            binding.rvReportBreakdown.visibility = GONE
+                            binding.textEmptyBreakdown.visibility = VISIBLE
                         }
                     } else {
                         binding.textReportRevenue.text = "Rp 0"
                         binding.textReportMargin.text = "Rp 0"
                         binding.reportChart.clear()
-                        binding.rvReportBreakdown.visibility = View.GONE
-                        binding.textEmptyBreakdown.visibility = View.VISIBLE
+                        binding.rvReportBreakdown.visibility = GONE
+                        binding.textEmptyBreakdown.visibility = VISIBLE
                     }
                 }
                 is ReportResult.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.cardChart.visibility = View.INVISIBLE
-                    binding.cardBreakdown.visibility = View.GONE
+                    binding.layoutReportSkeleton.visibility = GONE
+                    binding.layoutMetrics.visibility = VISIBLE
+                    binding.cardChart.visibility = GONE
+                    binding.cardBreakdown.visibility = GONE
+                    binding.progressBar.visibility = GONE
                     Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    private fun setupChart(reportList: List<com.mobile.tugasrancangmoka.model.ReportData>) {
+    private fun setupChart(reportList: List<ReportData>) {
         val entries = ArrayList<Entry>()
         val labels = ArrayList<String>()
 
@@ -226,6 +234,8 @@ class ReportFragment : Fragment() {
                 isGranularityEnabled = true
                 setDrawGridLines(false)
                 textColor = requireContext().getColor(R.color.on_surface_variant)
+                setLabelCount(5, false) // Max 5 labels to prevent overlapping
+                setAvoidFirstLastClipping(true)
             }
 
             axisLeft.apply {
@@ -244,26 +254,26 @@ class ReportFragment : Fragment() {
         _binding = null
     }
 
-    private fun setupBreakdownList(reportList: List<com.mobile.tugasrancangmoka.model.ReportData>) {
+    private fun setupBreakdownList(reportList: List<ReportData>) {
         binding.rvReportBreakdown.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
         binding.rvReportBreakdown.adapter = ReportBreakdownAdapter(reportList)
-        binding.rvReportBreakdown.visibility = View.VISIBLE
-        binding.textEmptyBreakdown.visibility = View.GONE
+        binding.rvReportBreakdown.visibility = VISIBLE
+        binding.textEmptyBreakdown.visibility = GONE
     }
 
-    private class ReportBreakdownAdapter(private val list: List<com.mobile.tugasrancangmoka.model.ReportData>) :
+    private class ReportBreakdownAdapter(private val list: List<ReportData>) :
         Adapter<ReportBreakdownAdapter.ViewHolder>() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val textDate: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_date)
-            val textTxs: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_txs)
-            val textRevenue: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_revenue)
-            val textProfit: TextView = view.findViewById(com.mobile.tugasrancangmoka.R.id.text_row_profit)
+            val textDate: TextView = view.findViewById(R.id.text_row_date)
+            val textTxs: TextView = view.findViewById(R.id.text_row_txs)
+            val textRevenue: TextView = view.findViewById(R.id.text_row_revenue)
+            val textProfit: TextView = view.findViewById(R.id.text_row_profit)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context)
-                .inflate(com.mobile.tugasrancangmoka.R.layout.item_report_row, parent, false)
+                .inflate(R.layout.item_report_row, parent, false)
             return ViewHolder(view)
         }
 
@@ -278,9 +288,9 @@ class ReportFragment : Fragment() {
             holder.textProfit.text = formatter.format(item.grossProfit)
 
             if (item.grossProfit < 0) {
-                holder.textProfit.setTextColor(holder.itemView.context.getColor(com.mobile.tugasrancangmoka.R.color.red_strong))
+                holder.textProfit.setTextColor(holder.itemView.context.getColor(R.color.red_strong))
             } else {
-                holder.textProfit.setTextColor(holder.itemView.context.getColor(com.mobile.tugasrancangmoka.R.color.active_green))
+                holder.textProfit.setTextColor(holder.itemView.context.getColor(R.color.active_green))
             }
         }
 

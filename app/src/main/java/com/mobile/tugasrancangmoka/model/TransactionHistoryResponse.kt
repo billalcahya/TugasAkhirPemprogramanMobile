@@ -22,7 +22,7 @@ data class TransactionRecord(
     @SerializedName("payment_method") val paymentMethod: String,
     @SerializedName("payment_amount") val paymentAmount: Double,
     @SerializedName("change_amount") val changeAmount: Double,
-    val status: String, // 'completed' atau 'voided'
+    val status: String,
     @SerializedName("void_reason") val voidReason: String?,
     @SerializedName("created_at") val createdAt: String,
     val items: List<TransactionDetailItem>?

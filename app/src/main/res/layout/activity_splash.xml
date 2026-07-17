@@ -37,8 +37,8 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_coffee"
                     android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_coffee"
                     app:tint="@color/on_primary" />
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>

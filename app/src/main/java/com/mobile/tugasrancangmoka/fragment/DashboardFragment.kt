@@ -106,10 +106,21 @@ class DashboardFragment : Fragment() {
         viewModel.dashboardState.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is DashboardResult.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.layoutDashboardSkeleton.visibility = View.VISIBLE
+                    binding.cardHero.visibility = View.GONE
+                    binding.layoutQuickActions.visibility = View.GONE
+                    binding.layoutStatusCards.visibility = View.GONE
+                    binding.cardTopProducts.visibility = View.GONE
+                    binding.cardLowStock.visibility = View.GONE
+                    binding.progressBar.visibility = View.GONE
                 }
                 is DashboardResult.Success -> {
+                    binding.layoutDashboardSkeleton.visibility = View.GONE
+                    binding.cardHero.visibility = View.VISIBLE
+                    binding.layoutQuickActions.visibility = View.VISIBLE
+                    binding.layoutStatusCards.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE
+
                     val data = result.response.data
                     if (data != null) {
                         val formatter = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
@@ -120,8 +131,7 @@ class DashboardFragment : Fragment() {
                         val lowStockCount = data.lowStockAlerts?.size ?: 0
                         binding.textLowStockCount.text = if (lowStockCount == 1) "1 Item" else "$lowStockCount Items"
 
-
-
+                        binding.cardTopProducts.visibility = View.VISIBLE
                         if (data.topProducts.isNullOrEmpty()) {
                             binding.rvTopProducts.visibility = View.GONE
                             binding.textEmptyTopProducts.visibility = View.VISIBLE
@@ -131,6 +141,7 @@ class DashboardFragment : Fragment() {
                             binding.rvTopProducts.adapter = TopProductsAdapter(data.topProducts)
                         }
 
+                        binding.cardLowStock.visibility = View.VISIBLE
                         if (data.lowStockAlerts.isNullOrEmpty()) {
                             binding.rvLowStock.visibility = View.GONE
                             binding.textEmptyLowStock.visibility = View.VISIBLE
@@ -152,6 +163,7 @@ class DashboardFragment : Fragment() {
                     }
                 }
                 is DashboardResult.Error -> {
+                    binding.layoutDashboardSkeleton.visibility = View.GONE
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG).show()
                 }

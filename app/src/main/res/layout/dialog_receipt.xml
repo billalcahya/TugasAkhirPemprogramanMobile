@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Payment Success Header Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +52,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Printable Receipt Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_receipt_print_area"
             android:layout_width="match_parent"
@@ -70,7 +68,6 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Merchant Header -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,7 +93,6 @@
                     android:textColor="#50453E"
                     android:textSize="11sp" />
 
-                <!-- Divider -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
@@ -104,7 +100,6 @@
                     android:layerType="software"
                     android:src="@drawable/dashed_line" />
 
-                <!-- Meta Info -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -172,7 +167,6 @@
                         tools:text="Admin" />
                 </RelativeLayout>
 
-                <!-- Divider -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
@@ -180,14 +174,12 @@
                     android:layerType="software"
                     android:src="@drawable/dashed_line" />
 
-                <!-- Items Container -->
                 <LinearLayout
                     android:id="@+id/layout_receipt_items"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 
-                <!-- Divider -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
@@ -195,7 +187,6 @@
                     android:layerType="software"
                     android:src="@drawable/dashed_line" />
 
-                <!-- Calculations -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -288,7 +279,6 @@
                         tools:text="Rp 44.400" />
                 </RelativeLayout>
 
-                <!-- Divider -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
@@ -296,7 +286,6 @@
                     android:layerType="software"
                     android:src="@drawable/dashed_line" />
 
-                <!-- Payment Details -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -366,7 +355,6 @@
                         tools:text="Rp 5.600" />
                 </RelativeLayout>
 
-                <!-- Divider -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
@@ -374,7 +362,6 @@
                     android:layerType="software"
                     android:src="@drawable/dashed_line" />
 
-                <!-- Footer text -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -395,7 +382,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Actions -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_print_receipt"
             android:layout_width="match_parent"

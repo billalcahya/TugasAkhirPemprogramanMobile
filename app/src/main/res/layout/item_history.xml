@@ -60,7 +60,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <!-- Status Indicator -->
             <TextView
                 android:id="@+id/text_history_status"
                 android:layout_width="wrap_content"

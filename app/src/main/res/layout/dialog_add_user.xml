@@ -32,9 +32,6 @@
             android:textColor="@color/on_surface_variant"
             android:textSize="12sp" />
 
-        <!-- Ganti bagian input TextInputLayout nama sebelumnya dengan struktur ini -->
-
-        <!-- Input Nama Lengkap -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_user_fullname"
             android:layout_width="match_parent"
@@ -49,7 +46,6 @@
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Input Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_user_email"
             android:layout_width="match_parent"
@@ -64,7 +60,6 @@
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Input Password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_user_password"
             android:layout_width="match_parent"
@@ -80,7 +75,6 @@
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Pilihan Role (Spinner) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,7 +90,6 @@
             android:layout_marginTop="4dp"
             android:background="@color/surface_container_low" />
 
-        <!-- Tombol Aksi -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

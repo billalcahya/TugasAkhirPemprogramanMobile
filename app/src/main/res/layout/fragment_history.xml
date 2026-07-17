@@ -18,7 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Status Filters Horizontal Group -->
     <LinearLayout
         android:id="@+id/layout_filters"
         android:layout_width="match_parent"
@@ -57,7 +56,6 @@
             android:textColor="@color/on_surface_variant" />
     </LinearLayout>
 
-    <!-- History List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
