@@ -45,6 +45,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private var imageUri: Uri? = null
     private var currentDialogImageView: ImageView? = null
     private var lastToastMessage: String? = null
+    private var isAdmin: Boolean = false
     private var lastToastTime: Long = 0
 
     private val getImage =
@@ -113,7 +114,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         val prefs = requireContext().getSharedPreferences("smartcafe_prefs", Context.MODE_PRIVATE)
         val userRole = prefs.getString("user_role", "cashier")
-        if (userRole?.equals("admin", ignoreCase = true) == true) {
+        isAdmin = userRole?.equals("admin", ignoreCase = true) == true
+        if (isAdmin) {
             binding.btnGridAddCategory.visibility = View.VISIBLE
             binding.btnGridManageCategory.visibility = View.VISIBLE
             binding.btnGridAddProduct.visibility = View.VISIBLE
@@ -215,6 +217,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             )
 
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
+                if (!isAdmin) {
+                    showToast("Hanya admin yang dapat mengedit atau menghapus kategori", Toast.LENGTH_SHORT)
+                    return@setOnItemClickListener
+                }
                 val selectedCategory = listCategory[position]
 
                 AlertDialog.Builder(requireContext())
@@ -293,6 +299,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             )
 
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
+                if (!isAdmin) {
+                    showToast("Hanya admin yang dapat mengedit atau menghapus kategori", Toast.LENGTH_SHORT)
+                    return@setOnItemClickListener
+                }
                 val selectedCategory = listCategory[position]
 
                 AlertDialog.Builder(requireContext())
@@ -516,6 +526,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             )
 
             dialogBinding.rvExistingCategories.setOnItemClickListener { _, _, position, _ ->
+                if (!isAdmin) {
+                    showToast("Hanya admin yang dapat mengedit atau menghapus produk", Toast.LENGTH_SHORT)
+                    return@setOnItemClickListener
+                }
                 val selectedProduct = listProduct[position]
 
                 AlertDialog.Builder(requireContext())

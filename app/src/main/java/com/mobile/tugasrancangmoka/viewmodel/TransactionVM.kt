@@ -80,7 +80,9 @@ class TransactionVM(private val repository: TransactionRepo) : ViewModel() {
                 if (response.isSuccessful) {
                     _voidState.postValue(VoidResult.Success)
                 } else {
-                    _voidState.postValue(VoidResult.Error("Gagal membatalkan transaksi"))
+                    val errorBody = response.errorBody()?.string()
+                    val errorMsg = com.mobile.tugasrancangmoka.utils.ErrorUtils.parseApiError(errorBody)
+                    _voidState.postValue(VoidResult.Error(errorMsg))
                 }
             } catch (e: Exception) {
                 _voidState.postValue(VoidResult.Error(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e)))

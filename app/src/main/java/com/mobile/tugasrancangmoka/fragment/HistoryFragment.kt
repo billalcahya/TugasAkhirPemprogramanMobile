@@ -37,6 +37,7 @@ class HistoryFragment : Fragment() {
 
     private lateinit var viewModel: TransactionVM
     private var currentFilter: String? = null
+    private var clickedRecordStatus: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -119,6 +120,7 @@ class HistoryFragment : Fragment() {
                         binding.rvHistory.visibility = View.VISIBLE
                         binding.textEmptyState.visibility = View.GONE
                         binding.rvHistory.adapter = HistoryAdapter(filteredList) { record ->
+                            clickedRecordStatus = record.status
                             viewModel.fetchTransactionDetail(record.id)
                         }
                     }
@@ -140,7 +142,10 @@ class HistoryFragment : Fragment() {
                 }
                 is DetailResult.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    showTransactionDetailDialog(result.record)
+                    android.util.Log.d("HistoryFragment", "API Detail Status: '${result.record.status}', List Status: '$clickedRecordStatus'")
+                    val finalStatus = clickedRecordStatus ?: result.record.status
+                    val finalRecord = result.record.copy(status = finalStatus)
+                    showTransactionDetailDialog(finalRecord)
                     viewModel.clearDetailState()
                 }
                 is DetailResult.Error -> {
@@ -181,6 +186,7 @@ class HistoryFragment : Fragment() {
     }
 
     private fun showTransactionDetailDialog(record: TransactionRecord) {
+        android.util.Log.d("HistoryFragment", "showTransactionDetailDialog: ID=${record.id}, status='${record.status}', voidReason='${record.voidReason}'")
         val dialogBinding = DialogTransactionDetailBinding.inflate(layoutInflater)
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogBinding.root)
@@ -204,7 +210,12 @@ class HistoryFragment : Fragment() {
         dialogBinding.textDetailDiscount.text = currencyFormatter.format(record.discountAmount)
         dialogBinding.textDetailGrandTotal.text = currencyFormatter.format(record.grandTotal)
 
-        if (record.status == "voided") {
+        val sessionManager = com.mobile.tugasrancangmoka.utils.SessionManager(requireContext())
+        val userRole = sessionManager.getRole().orEmpty()
+        val isAdmin = userRole.equals("admin", ignoreCase = true)
+
+        val isVoided = record.status.trim().equals("voided", ignoreCase = true) || record.status.trim().equals("void", ignoreCase = true)
+        if (isVoided) {
             dialogBinding.textDetailStatus.text = "Voided"
             dialogBinding.textDetailStatus.setBackgroundResource(R.drawable.bg_status_voided)
             dialogBinding.btnVoidTransaction.visibility = View.GONE
@@ -213,7 +224,11 @@ class HistoryFragment : Fragment() {
         } else {
             dialogBinding.textDetailStatus.text = "Completed"
             dialogBinding.textDetailStatus.setBackgroundResource(R.drawable.bg_status_completed)
-            dialogBinding.btnVoidTransaction.visibility = View.VISIBLE
+            if (isAdmin) {
+                dialogBinding.btnVoidTransaction.visibility = View.VISIBLE
+            } else {
+                dialogBinding.btnVoidTransaction.visibility = View.GONE
+            }
             dialogBinding.layoutVoidInfo.visibility = View.GONE
         }
 
@@ -306,7 +321,8 @@ class HistoryFragment : Fragment() {
             currencyFormatter.maximumFractionDigits = 0
             holder.textTotal.text = currencyFormatter.format(item.grandTotal)
 
-            if (item.status == "voided") {
+            val isVoided = item.status.trim().equals("voided", ignoreCase = true) || item.status.trim().equals("void", ignoreCase = true)
+            if (isVoided) {
                 holder.textStatus.text = "Voided"
                 holder.textStatus.setBackgroundResource(R.drawable.bg_status_voided)
             } else {

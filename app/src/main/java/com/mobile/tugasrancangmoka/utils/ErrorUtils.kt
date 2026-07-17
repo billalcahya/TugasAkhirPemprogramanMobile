@@ -56,4 +56,42 @@ object ErrorUtils {
             }
         }
     }
+
+    /**
+     * Mengubah response error JSON dari API menjadi pesan bahasa Indonesia yang ramah pengguna.
+     */
+    fun parseApiError(errorBodyString: String?): String {
+        if (errorBodyString.isNullOrBlank()) {
+            return "Transaksi gagal diproses"
+        }
+        
+        var parsedMsg = try {
+            val jsonObject = org.json.JSONObject(errorBodyString)
+            jsonObject.optString("message", "")
+                .ifBlank { jsonObject.optString("error", "") }
+                .ifBlank { "Transaksi gagal diproses" }
+        } catch (e: Exception) {
+            errorBodyString
+        }
+
+        // Deteksi pesan tentang stok barang tidak cukup
+        val lowerMsg = parsedMsg.lowercase(java.util.Locale.ROOT)
+        if (lowerMsg.contains("stock") || lowerMsg.contains("stok") || lowerMsg.contains("insufficient") || 
+            lowerMsg.contains("kurang") || lowerMsg.contains("cukup")) {
+            
+            // Coba terjemahkan secara cerdas dengan mempertahankan nama produk jika ada
+            return when {
+                parsedMsg.contains("insufficient stock for", ignoreCase = true) -> {
+                    parsedMsg.replace("Insufficient stock for", "Stok tidak mencukupi untuk", ignoreCase = true)
+                }
+                parsedMsg.contains("not enough stock for", ignoreCase = true) -> {
+                    parsedMsg.replace("Not enough stock for", "Stok tidak mencukupi untuk", ignoreCase = true)
+                }
+                else -> "Stok produk tidak mencukupi untuk memproses transaksi."
+            }
+        }
+        
+        return parsedMsg
+    }
 }
+

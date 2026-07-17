@@ -45,7 +45,8 @@ class CheckoutViewModel(private val repository: TransactionRepo) : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     _checkoutState.postValue(CheckoutResult.Success(response.body()!!))
                 } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Transaksi gagal diproses"
+                    val errorBody = response.errorBody()?.string()
+                    val errorMsg = com.mobile.tugasrancangmoka.utils.ErrorUtils.parseApiError(errorBody)
                     _checkoutState.postValue(CheckoutResult.Error(errorMsg))
                 }
             } catch (e: Exception) {

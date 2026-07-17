@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="24dp"
+                    android:padding="60dp"
                     android:gravity="center_horizontal">
 
                     <com.google.android.material.card.MaterialCardView
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Espresso Logic"
+                        android:text="RoastFlow"
                         android:textColor="@color/primary"
                         android:textSize="28sp"
                         android:textStyle="bold"
@@ -85,9 +85,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Welcome Back"
+                        android:text="Manage your business effortlessly"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="22sp"
+                        android:textSize="16sp"
                         android:fontFamily="sans-serif-medium" />
 
                     <TextView
@@ -120,10 +120,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:hint="barista@espressologic.com"
+                            android:hint="Insert your email"
                             android:textColorHint="@color/outline_variant"
                             android:textColor="@color/on_background"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:paddingVertical="12dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -141,19 +141,6 @@
                             android:textColor="@color/on_surface_variant"
                             android:textSize="14sp"
                             android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/text_forgot_password"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:text="Forgot Password?"
-                            android:textColor="@color/primary"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true"/>
                     </RelativeLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -179,22 +166,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
-                            android:hint="••••••••"
+                            android:hint="• • • • • • • •"
                             android:textColorHint="@color/outline_variant"
                             android:textColor="@color/on_background"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:paddingVertical="12dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
-                        android:id="@+id/checkbox_remember"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Remember this device"
-                        android:textColor="@color/on_surface_variant"
-                        android:textSize="14sp"
-                        app:buttonTint="@color/primary" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_login"
@@ -203,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         android:padding="14dp"
-                        android:text="Login to Dashboard"
+                        android:text="Login "
                         android:textColor="@color/on_primary"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -217,30 +194,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:visibility="gone" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Need technical assistance? "
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/text_contact_support"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Contact Support"
-                            android:textColor="@color/primary"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -267,7 +220,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="Secure Connection"
+                    android:text="Powered by RoastFlow"
                     android:textColor="@color/outline"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium" />
@@ -289,7 +242,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="v0.0.1"
+                    android:text="Develop for TC712C"
                     android:textColor="@color/outline"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-medium" />
