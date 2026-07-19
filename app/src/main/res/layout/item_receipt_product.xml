@@ -9,7 +9,7 @@
         android:id="@+id/txt_product_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#1E1B19"
+        android:textColor="@color/on_surface"
         android:textSize="12sp"
         android:textStyle="bold"
         android:text="Espresso Blend" />
@@ -23,7 +23,7 @@
             android:id="@+id/txt_product_qty_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#50453E"
+            android:textColor="@color/on_surface_variant"
             android:textSize="11sp"
             android:text="2 x Rp 15.000" />
 
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:textColor="#1E1B19"
+            android:textColor="@color/on_surface"
             android:textSize="12sp"
             android:text="Rp 30.000" />
     </RelativeLayout>

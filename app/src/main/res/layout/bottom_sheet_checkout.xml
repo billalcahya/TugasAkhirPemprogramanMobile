@@ -147,6 +147,58 @@
                 android:text="Non-Cash"/>
         </RadioGroup>
 
+        <!-- Container QRIS untuk Pembayaran Non-Tunai -->
+        <LinearLayout
+            android:id="@+id/layout_qris_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_qris_card"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan QRIS untuk Pembayaran"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/outline_variant"
+                app:cardBackgroundColor="@color/on_primary">
+
+                <ImageView
+                    android:id="@+id/img_qris_code"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="280dp"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/qris"
+                    android:contentDescription="QRIS Code" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tunjukkan QR Code ini kepada pelanggan"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_payment_amount"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -170,6 +222,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_change"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp">

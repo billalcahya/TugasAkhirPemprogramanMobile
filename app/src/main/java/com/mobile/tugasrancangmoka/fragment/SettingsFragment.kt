@@ -31,6 +31,7 @@ import com.mobile.tugasrancangmoka.databinding.FragmentSettingsBinding
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.CategoryRepo
 import com.mobile.tugasrancangmoka.utils.SessionManager
+import com.mobile.tugasrancangmoka.utils.UriToFileUtil
 import com.mobile.tugasrancangmoka.viewmodel.SettingsVM
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 import java.text.SimpleDateFormat
@@ -51,8 +52,24 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private val getImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                imageUri = it
-                currentDialogImageView?.setImageURI(it)
+                try {
+                    val file = UriToFileUtil.getFileFromUri(requireContext(), it)
+                    val maxSizeInBytes = 2 * 1024 * 1024
+                    if (file.length() > maxSizeInBytes) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Ukuran gambar melebihi 2 MB! Silakan pilih gambar yang lebih kecil.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        imageUri = it
+                        currentDialogImageView?.setImageURI(it)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    imageUri = it
+                    currentDialogImageView?.setImageURI(it)
+                }
             }
         }
 
@@ -152,7 +169,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         binding.rvUsers.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
         viewModel.users.observe(viewLifecycleOwner) { listUser ->
             if (!listUser.isNullOrEmpty()) {
-                // Kirim userRole ke adapter
                 binding.rvUsers.adapter = UserAdapter(listUser, userRole) { clickedUser ->
                     AlertDialog.Builder(requireContext())
                         .setTitle("Opsi User: ${clickedUser.fullName}")
@@ -227,7 +243,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     .setTitle("Opsi Kategori: ${selectedCategory.name}")
                     .setItems(arrayOf("Edit Nama", "Hapus Kategori")) { _, which ->
                         when (which) {
-                            0 -> { // Memilih Edit Nama
+                            0 -> {
                                 dialogBinding.etCategoryName.setText(selectedCategory.name)
                                 dialogBinding.btnSave.text = "Update"
 
@@ -289,7 +305,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         dialogBinding.tilCategoryName.visibility = View.GONE
         dialogBinding.btnSave.visibility = View.GONE
 
-        // READ: Menampilkan List data ke ListView
         viewModel.categories.observe(viewLifecycleOwner) { listCategory ->
             val namesList = listCategory.map { it.name }
             dialogBinding.rvExistingCategories.adapter = ArrayAdapter(
@@ -309,7 +324,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     .setTitle("Opsi Kategori: ${selectedCategory.name}")
                     .setItems(arrayOf("Edit Nama", "Hapus Kategori")) { _, which ->
                         when (which) {
-                            0 -> { // Memilih Edit Nama
+                            0 -> {
                                 val input = android.widget.EditText(requireContext())
                                 input.setText(selectedCategory.name)
                                 input.setSelection(selectedCategory.name.length)
@@ -449,8 +464,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             dialogBinding.etProductName.setText(existingProduct.name)
             dialogBinding.etSellPrice.setText(existingProduct.sellPrice.toInt().toString())
             dialogBinding.etCostPrice.setText(existingProduct.costPrice.toInt().toString())
-            dialogBinding.etInitialStock.setText(existingProduct.initialStock.toString())
-            dialogBinding.etMinimumStock.setText(existingProduct.minStock.toString())
+
+            val initialStockVal = existingProduct.initialStock ?: existingProduct.stock ?: 0
+            val minStockVal = existingProduct.minStock ?: 0
+            dialogBinding.etInitialStock.setText(initialStockVal.toString())
+            dialogBinding.etMinimumStock.setText(minStockVal.toString())
             dialogBinding.btnSave.text = "Update"
 
             existingProduct.imageUrl?.let { url ->
@@ -477,8 +495,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 return@setOnClickListener
             }
 
+            val productId = existingProduct?.id
+
             val productData = Product(
-                id = existingProduct?.id,
+                id = productId,
                 categoryId = selectedCategoryId,
                 name = name,
                 sellPrice = sellPriceStr.toDoubleOrNull() ?: 0.0,
@@ -493,7 +513,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             if (existingProduct == null) {
                 viewModel.addProductWithImage(requireContext(), productData, imageUri)
             } else {
-                viewModel.updateProduct(existingProduct.id ?: 0, productData)
+                if (productId != null && productId != 0) {
+                    viewModel.updateProduct(productId, productData)
+                } else {
+                    showToast("Gagal memperbarui: ID Produk tidak ditemukan/null", Toast.LENGTH_SHORT)
+                }
             }
             alertDialog.dismiss()
         }
@@ -653,7 +677,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         dialogBinding.btnSave.setOnClickListener {
             val fullName = dialogBinding.etUserFullname.text.toString().trim()
-            val email = dialogBinding.etUserEmail.text.toString().trim() // Ambil ketikan email baru
+            val email = dialogBinding.etUserEmail.text.toString().trim()
             val password = dialogBinding.etUserPassword.text.toString().trim()
             val selectedRoleText = dialogBinding.spinnerUserRole.selectedItem.toString()
 
@@ -678,7 +702,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             val updateMap = mutableMapOf(
                 "full_name" to fullName,
-                "email" to email, //
+                "email" to email,
                 "role" to backendRole
             )
 

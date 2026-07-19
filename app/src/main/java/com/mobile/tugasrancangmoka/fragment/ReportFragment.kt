@@ -1,5 +1,6 @@
 package com.mobile.tugasrancangmoka.fragment
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
@@ -194,6 +196,7 @@ class ReportFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupChart(reportList: List<ReportData>) {
         val entries = ArrayList<Entry>()
         val labels = ArrayList<String>()

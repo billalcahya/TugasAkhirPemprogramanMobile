@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    
+    <!-- White Background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,10 h180 a10,10 0 0,1 10,10 v180 a10,10 0 0,1 -10,10 h-180 a10,10 0 0,1 -10,-10 v-180 a10,10 0 0,1 10,-10 Z" />
+
+    <!-- QRIS Banner Bar -->
+    <path
+        android:fillColor="#ED1C24"
+        android:pathData="M20,20 h160 v22 h-160 Z" />
+        
+    <!-- QRIS Text Vector Shapes -->
+    <!-- Q -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,25 h10 v12 h-10 Z M31,27 h4 v8 h-4 Z M35,34 h4 v3 h-4 Z" />
+    <!-- R -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,25 h9 v6 h-9 Z M45,27 h3 v2 h-3 Z M42,31 h3 v6 h-3 Z M48,31 h3 v6 h-3 Z" />
+    <!-- I -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,25 h4 v12 h-4 Z" />
+    <!-- S -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M61,25 h9 v3 h-9 Z M61,28 h4 v3 h-4 Z M61,31 h9 v3 h-9 Z M66,34 h4 v3 h-4 Z" />
+
+    <!-- Top Left Finder Pattern -->
+    <path android:fillColor="#000000" android:pathData="M25,52 h45 v45 h-45 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M31,58 h33 v33 h-33 Z" />
+    <path android:fillColor="#000000" android:pathData="M37,64 h21 v21 h-21 Z" />
+
+    <!-- Top Right Finder Pattern -->
+    <path android:fillColor="#000000" android:pathData="M130,52 h45 v45 h-45 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M136,58 h33 v33 h-33 Z" />
+    <path android:fillColor="#000000" android:pathData="M142,64 h21 v21 h-21 Z" />
+
+    <!-- Bottom Left Finder Pattern -->
+    <path android:fillColor="#000000" android:pathData="M25,130 h45 v45 h-45 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M31,136 h33 v33 h-33 Z" />
+    <path android:fillColor="#000000" android:pathData="M37,142 h21 v21 h-21 Z" />
+
+    <!-- Alignment Pattern -->
+    <path android:fillColor="#000000" android:pathData="M140,140 h25 v25 h-25 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M144,144 h17 v17 h-17 Z" />
+    <path android:fillColor="#000000" android:pathData="M148,148 h9 v9 h-9 Z" />
+
+    <!-- QR Code Data Matrix Blocks -->
+    <path android:fillColor="#000000" android:pathData="
+        M78,52 h10 v10 h-10 Z M98,52 h12 v10 h-12 Z M115,52 h10 v10 h-10 Z
+        M78,67 h15 v10 h-15 Z M100,67 h10 v10 h-10 Z M115,67 h10 v10 h-10 Z
+        M85,82 h10 v10 h-10 Z M100,82 h20 v10 h-20 Z
+        M25,103 h10 v10 h-10 Z M42,103 h12 v10 h-12 Z M60,103 h10 v10 h-10 Z M78,103 h15 v10 h-15 Z M100,103 h10 v10 h-10 Z M115,103 h15 v10 h-15 Z M135,103 h10 v10 h-10 Z M152,103 h15 v10 h-15 Z
+        M32,118 h12 v10 h-12 Z M50,118 h10 v10 h-10 Z M70,118 h15 v10 h-15 Z M92,118 h15 v10 h-15 Z M115,118 h10 v10 h-10 Z M130,118 h15 v10 h-15 Z M150,118 h15 v10 h-15 Z
+        M78,133 h12 v10 h-12 Z M95,133 h15 v10 h-15 Z M115,133 h10 v10 h-10 Z M170,133 h10 v10 h-10 Z
+        M78,148 h15 v10 h-15 Z M100,148 h10 v10 h-10 Z M118,148 h15 v10 h-15 Z M170,148 h10 v10 h-10 Z
+        M25,180 h10 v10 h-10 Z M42,180 h15 v10 h-15 Z M65,180 h10 v10 h-10 Z M82,180 h12 v10 h-12 Z M100,180 h15 v10 h-15 Z M122,180 h10 v10 h-10 Z M140,180 h15 v10 h-15 Z M160,180 h15 v10 h-15 Z
+        " />
+</vector>

@@ -157,7 +157,32 @@ class SettingsVM(
             try {
                 val response = productRepo.getProducts(categoryId, search)
                 if (response.isSuccessful && response.body() != null) {
-                    val productList = response.body().orEmpty()
+                    var productList = response.body().orEmpty()
+
+                    try {
+                        val invResponse = productRepo.apiService.getInventory()
+                        if (invResponse.isSuccessful && invResponse.body()?.data != null) {
+                            val invList = invResponse.body()!!.data.orEmpty()
+                            val invMapByProductId = invList.associateBy { it.productId }
+                            val invMapById = invList.associateBy { it.id }
+
+                            productList = productList.map { prod ->
+                                val invItem = prod.id?.let { invMapByProductId[it] ?: invMapById[it] }
+                                val currentStock = invItem?.stock
+                                val initialStk = prod.initialStock ?: invItem?.initialStock ?: invItem?.nestedProduct?.initialStock ?: currentStock ?: 0
+                                val minStk = prod.minStock ?: invItem?.minStock ?: invItem?.nestedProduct?.minStock ?: 0
+                                prod.copy(
+                                    initialStock = initialStk,
+                                    minStock = minStk,
+                                    stock = prod.stock ?: currentStock ?: initialStk,
+                                    unit = prod.unit ?: invItem?.unit ?: "pcs"
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("DEBUG_MOKA", "Error fetching inventory for products: ${e.message}")
+                    }
+
                     _products.postValue(productList)
 
                     var updated = false
@@ -186,6 +211,33 @@ class SettingsVM(
             try {
                 val response = productRepo.updateProduct(id, product)
                 if (response.isSuccessful) {
+                    val stockToUpdate = product.initialStock ?: product.stock ?: 0
+                    val minStockToUpdate = product.minStock ?: 0
+                    val unitToUpdate = product.unit ?: "pcs"
+
+                    try {
+                        val invResponse = productRepo.apiService.getInventory()
+                        if (invResponse.isSuccessful && invResponse.body()?.data != null) {
+                            val invItem = invResponse.body()!!.data.orEmpty()
+                                .firstOrNull { it.productId == id || it.id == id }
+
+                            invItem?.let { item ->
+                                val requestPayload = com.mobile.tugasrancangmoka.model.UpdateInventoryRequest(
+                                    currentStock = stockToUpdate,
+                                    minStock = minStockToUpdate,
+                                    unit = unitToUpdate
+                                )
+
+                                // Kirim stok, min_stock, dan unit sekaligus
+                                productRepo.apiService.updateStock(
+                                    item.id,
+                                    requestPayload
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("DEBUG_MOKA", "Error updating inventory stock: ${e.message}")
+                    }
                     _productResult.postValue("Produk berhasil diperbarui!")
                     fetchProducts(null, null)
                 } else {
@@ -218,6 +270,10 @@ class SettingsVM(
             try {
                 val imagePart: MultipartBody.Part? = if (imageUri != null) {
                     val file = UriToFileUtil.getFileFromUri(context, imageUri)
+                    if (file.length() > 2 * 1024 * 1024) { // 2 MB
+                        _productResult.postValue("Gagal: Ukuran gambar melebihi batas 2 MB!")
+                        return@launch
+                    }
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                     MultipartBody.Part.createFormData("product_image", file.name, requestFile)
                 } else {

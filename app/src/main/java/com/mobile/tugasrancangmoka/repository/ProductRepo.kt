@@ -7,7 +7,7 @@ import okhttp3.MultipartBody
 import okhttp3.MultipartBody.Part
 import retrofit2.Response
 
-class ProductRepo(private val apiService: ApiService) {
+class ProductRepo(val apiService: ApiService) {
     suspend fun getProducts(categoryId: Int?, search: String?): Response<List<Product>> {
         return apiService.getProducts(categoryId, search)
     }

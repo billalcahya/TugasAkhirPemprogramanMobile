@@ -11,9 +11,11 @@ import com.mobile.tugasrancangmoka.model.LoginRequest
 import com.mobile.tugasrancangmoka.model.LoginResponse
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.model.ReportResponse
+import com.mobile.tugasrancangmoka.model.SingleInventoryResponse
 import com.mobile.tugasrancangmoka.model.SingleProductResponse
 import com.mobile.tugasrancangmoka.model.TransactionDetailResponse
 import com.mobile.tugasrancangmoka.model.TransactionResponse
+import com.mobile.tugasrancangmoka.model.UpdateInventoryRequest
 import com.mobile.tugasrancangmoka.model.UserListResponse
 import com.mobile.tugasrancangmoka.model.UserResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
@@ -77,6 +79,12 @@ interface ApiService {
         @Body product: Product
     ): Response<SingleProductResponse>
 
+    @PUT("inventory/{id}")
+    suspend fun updateStock(
+        @Path("id") id: Int,
+        @Body request: UpdateInventoryRequest
+    ): Response<SingleInventoryResponse>
+
     @DELETE("products/{id}")
     suspend fun deleteProduct(@Path("id") id: Int): Response<SingleProductResponse>
 
@@ -90,7 +98,7 @@ interface ApiService {
     suspend fun updateStock(
         @Path("id") id: Int,
         @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
-    ): Response<com.mobile.tugasrancangmoka.model.SingleInventoryResponse>
+    ): Response<SingleInventoryResponse>
 
     @GET("inventory")
     suspend fun getInventory(

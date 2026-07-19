@@ -58,10 +58,11 @@ class DashboardFragment : Fragment() {
         if (!userRole.equals("admin", ignoreCase = true)) {
             binding.cardActionStockIn.visibility = View.GONE
         }
+    }
 
-        if (viewModel.dashboardState.value !is DashboardResult.Success) {
-            viewModel.fetchDashboard()
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchDashboard()
     }
 
     private fun setupRecyclerViews() {
@@ -106,12 +107,14 @@ class DashboardFragment : Fragment() {
         viewModel.dashboardState.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is DashboardResult.Loading -> {
-                    binding.layoutDashboardSkeleton.visibility = View.VISIBLE
-                    binding.cardHero.visibility = View.GONE
-                    binding.layoutQuickActions.visibility = View.GONE
-                    binding.layoutStatusCards.visibility = View.GONE
-                    binding.cardTopProducts.visibility = View.GONE
-                    binding.cardLowStock.visibility = View.GONE
+                    if (binding.cardHero.visibility != View.VISIBLE) {
+                        binding.layoutDashboardSkeleton.visibility = View.VISIBLE
+                        binding.cardHero.visibility = View.GONE
+                        binding.layoutQuickActions.visibility = View.GONE
+                        binding.layoutStatusCards.visibility = View.GONE
+                        binding.cardTopProducts.visibility = View.GONE
+                        binding.cardLowStock.visibility = View.GONE
+                    }
                     binding.progressBar.visibility = View.GONE
                 }
                 is DashboardResult.Success -> {

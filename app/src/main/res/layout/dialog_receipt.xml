@@ -31,14 +31,14 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_check_circle"
-                    app:tint="@android:color/white" />
+                    app:tint="@color/on_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Pembayaran Berhasil!"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/on_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="Transaksi telah dicatat ke sistem"
-                    android:textColor="#EEC1A4"
+                    android:textColor="@color/on_primary_container"
                     android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@android:color/white"
+            app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="CENTRAL CAFE"
-                    android:textColor="#1E1B19"
+                    android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Jl. Universitas No. 1, Salatiga"
-                    android:textColor="#50453E"
+                    android:textColor="@color/on_surface_variant"
                     android:textSize="12sp" />
 
                 <TextView
@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Telp: (0298) 123456"
-                    android:textColor="#50453E"
+                    android:textColor="@color/on_surface_variant"
                     android:textSize="11sp" />
 
                 <ImageView
@@ -109,7 +109,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="No. Transaksi:"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -117,7 +117,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         tools:text="TX-98402941" />
@@ -132,7 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tanggal:"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -140,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         tools:text="13 Jul 2026 07:54" />
                 </RelativeLayout>
@@ -154,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Kasir:"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -162,7 +162,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         tools:text="Admin" />
                 </RelativeLayout>
@@ -195,7 +195,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Subtotal"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -203,7 +203,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         tools:text="Rp 45.000" />
                 </RelativeLayout>
@@ -220,7 +220,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Diskon"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -228,7 +228,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#BA1A1A"
+                        android:textColor="@color/error"
                         android:textSize="12sp"
                         tools:text="-Rp 5.000" />
                 </RelativeLayout>
@@ -242,7 +242,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pajak (11%)"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -250,7 +250,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         tools:text="Rp 4.400" />
                 </RelativeLayout>
@@ -264,7 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Total Akhir"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -273,7 +273,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#553722"
+                        android:textColor="@color/primary"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         tools:text="Rp 44.400" />
@@ -294,7 +294,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Metode Pembayaran"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -302,7 +302,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         tools:text="TUNAI" />
@@ -318,7 +318,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tunai Diterima"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -326,7 +326,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         tools:text="Rp 50.000" />
                 </RelativeLayout>
@@ -341,7 +341,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Kembalian"
-                        android:textColor="#50453E"
+                        android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 
                     <TextView
@@ -349,7 +349,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:textColor="#1E1B19"
+                        android:textColor="@color/on_surface"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         tools:text="Rp 5.600" />
@@ -367,7 +367,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Terima Kasih atas Kunjungan Anda!"
-                    android:textColor="#50453E"
+                    android:textColor="@color/on_surface_variant"
                     android:textSize="11sp"
                     android:textStyle="italic" />
 
@@ -377,7 +377,7 @@
                     android:layout_marginTop="2dp"
                     android:gravity="center"
                     android:text="Layanan Konsumen: cs@centralcafe.com"
-                    android:textColor="#82746D"
+                    android:textColor="@color/outline"
                     android:textSize="9sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -387,12 +387,12 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="Cetak Nota"
-            android:textColor="@android:color/white"
+            android:textColor="@color/on_primary"
             app:backgroundTint="@color/primary"
             app:cornerRadius="24dp"
             app:icon="@drawable/ic_print"
             app:iconGravity="textStart"
-            app:iconTint="@android:color/white" />
+            app:iconTint="@color/on_primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_done_receipt"

@@ -73,8 +73,12 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
         if (paymentMethod == "non_cash") {
             paymentAmount = grandTotal
             binding.layoutPaymentAmount.visibility = View.GONE
+            binding.layoutChange.visibility = View.GONE
+            binding.layoutQrisContainer.visibility = View.VISIBLE
         } else {
             binding.layoutPaymentAmount.visibility = View.VISIBLE
+            binding.layoutChange.visibility = View.VISIBLE
+            binding.layoutQrisContainer.visibility = View.GONE
             val inputStr = binding.editPaymentAmount.text.toString().trim()
             paymentAmount = inputStr.toDoubleOrNull() ?: 0.0
         }
