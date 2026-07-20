@@ -37,7 +37,8 @@ class InventoryViewModel(private val repository: InventoryRepo) : ViewModel() {
                 val body = response.body()
 
                 if (response.isSuccessful && body != null && body.data != null) {
-                    _inventoryState.postValue(InventoryResult.Success(body.data))
+                    val sortedList = body.data.sortedBy { it.name.lowercase(java.util.Locale.ROOT) }
+                    _inventoryState.postValue(InventoryResult.Success(sortedList))
                 } else {
                     _inventoryState.postValue(InventoryResult.Error("Gagal memuat stok barang"))
                 }

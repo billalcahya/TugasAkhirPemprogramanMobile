@@ -151,7 +151,8 @@ class DashboardFragment : Fragment() {
                         } else {
                             binding.rvLowStock.visibility = View.VISIBLE
                             binding.textEmptyLowStock.visibility = View.GONE
-                            binding.rvLowStock.adapter = LowStockAdapter(data.lowStockAlerts) { item ->
+                            val sortedLowStock = data.lowStockAlerts.sortedBy { it.productName.lowercase(java.util.Locale.ROOT) }
+                            binding.rvLowStock.adapter = LowStockAdapter(sortedLowStock) { item ->
                                 val sharedPrefs = requireContext().getSharedPreferences("DashboardPrefs", android.content.Context.MODE_PRIVATE)
                                 sharedPrefs.edit().putString("pending_restock_search", item.productName).apply()
 

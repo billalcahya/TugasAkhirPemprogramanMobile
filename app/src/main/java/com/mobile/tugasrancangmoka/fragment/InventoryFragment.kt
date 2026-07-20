@@ -91,15 +91,16 @@ class InventoryFragment : Fragment() {
                 item.name.contains(query, ignoreCase = true)
             }
         }
+        val sortedList = filteredList.sortedBy { it.name.lowercase(java.util.Locale.ROOT) }
 
-        if (filteredList.isEmpty()) {
+        if (sortedList.isEmpty()) {
             binding.rvInventory.visibility = View.GONE
             binding.textEmptyState.visibility = View.VISIBLE
             binding.textEmptyState.text = "No products found"
         } else {
             binding.rvInventory.visibility = View.VISIBLE
             binding.textEmptyState.visibility = View.GONE
-            binding.rvInventory.adapter = InventoryAdapter(filteredList) { item ->
+            binding.rvInventory.adapter = InventoryAdapter(sortedList) { item ->
                 showUpdateStockDialog(item)
             }
         }
@@ -114,7 +115,7 @@ class InventoryFragment : Fragment() {
                 }
                 is InventoryResult.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    fullInventoryList = result.products
+                    fullInventoryList = result.products.sortedBy { it.name.lowercase(java.util.Locale.ROOT) }
                     filterAndDisplayStock()
                 }
                 is InventoryResult.Error -> {
