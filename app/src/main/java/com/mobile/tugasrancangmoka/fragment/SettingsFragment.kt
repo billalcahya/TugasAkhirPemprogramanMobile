@@ -30,8 +30,10 @@ import com.mobile.tugasrancangmoka.databinding.DialogAddProductBinding
 import com.mobile.tugasrancangmoka.databinding.FragmentSettingsBinding
 import com.mobile.tugasrancangmoka.model.Product
 import com.mobile.tugasrancangmoka.repository.CategoryRepo
+import com.mobile.tugasrancangmoka.repository.ProductRepo
 import com.mobile.tugasrancangmoka.utils.SessionManager
 import com.mobile.tugasrancangmoka.utils.UriToFileUtil
+import com.mobile.tugasrancangmoka.viewmodel.POSViewModel
 import com.mobile.tugasrancangmoka.viewmodel.SettingsVM
 import com.mobile.tugasrancangmoka.viewmodel.ViewModelFactory
 import java.text.SimpleDateFormat
@@ -43,6 +45,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: SettingsVM
+    private lateinit var posViewModel: POSViewModel
     private var imageUri: Uri? = null
     private var currentDialogImageView: ImageView? = null
     private var lastToastMessage: String? = null
@@ -114,9 +117,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         _binding = FragmentSettingsBinding.bind(view)
 
         val apiService = ApiClient.getApiService(requireContext())
-        val repository = CategoryRepo(apiService)
-        val factory = ViewModelFactory(repository)
+        val categoryRepo = CategoryRepo(apiService)
+        val productRepo = ProductRepo(apiService)
+        val factory = ViewModelFactory(categoryRepo)
         viewModel = ViewModelProvider(this, factory)[SettingsVM::class.java]
+
+        val posFactory = ViewModelFactory(productRepo)
+        posViewModel = ViewModelProvider(requireActivity(), posFactory)[POSViewModel::class.java]
 
         val tvUsername = view.findViewById<TextView>(R.id.tv_username)
         val tvUserRole = view.findViewById<TextView>(R.id.tv_user_role)
@@ -382,8 +389,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val alertDialog = builder.create()
         alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        var selectedCategoryId = 0
-        var selectedUnitName = "pcs"
+        var selectedCategoryId = existingProduct?.categoryId ?: 0
+        var selectedUnitName = existingProduct?.unit ?: "pcs"
 
         imageUri = null
         currentDialogImageView = dialogBinding.ivProductPreview
@@ -401,7 +408,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             existingProduct?.let { prod ->
                 val index = listCategory.indexOfFirst { it.id == prod.categoryId }
-                if (index != -1) dialogBinding.spinnerCategory.setSelection(index)
+                if (index != -1) {
+                    dialogBinding.spinnerCategory.setSelection(index)
+                    selectedCategoryId = listCategory[index].id
+                }
             }
 
             dialogBinding.spinnerCategory.onItemSelectedListener =
@@ -473,9 +483,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             existingProduct.imageUrl?.let { url ->
                 if (url.isNotEmpty()) {
-                    Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_product)
+                    val fullUrl = when {
+                        url.startsWith("http://") || url.startsWith("https://") -> url
+                        url.startsWith("/") -> "https://pemprograman-mobile-be.vercel.app$url"
+                        else -> "https://pemprograman-mobile-be.vercel.app/$url"
+                    }
+                    Glide.with(this).load(fullUrl).placeholder(R.drawable.ic_placeholder_product)
                         .into(dialogBinding.ivProductPreview)
-
                 }
             }
 
@@ -514,7 +528,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 viewModel.addProductWithImage(requireContext(), productData, imageUri)
             } else {
                 if (productId != null && productId != 0) {
-                    viewModel.updateProduct(productId, productData)
+//                    viewModel.updateProduct(productId, productData)
+                    viewModel.updateProduct(requireContext(), productId, productData, imageUri)
                 } else {
                     showToast("Gagal memperbarui: ID Produk tidak ditemukan/null", Toast.LENGTH_SHORT)
                 }
@@ -722,6 +737,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.categoryResult.observe(viewLifecycleOwner) { result ->
             if (!result.isNullOrEmpty()) {
                 showToast(result, Toast.LENGTH_SHORT)
+                if (result.contains("berhasil", ignoreCase = true)) {
+                    posViewModel.clearCart()
+                }
                 viewModel.resetCategoryResult()
             }
         }
@@ -740,6 +758,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.productResult.observe(viewLifecycleOwner) { message ->
             if (!message.isNullOrEmpty()) {
                 showToast(message, Toast.LENGTH_LONG)
+                if (message.contains("berhasil", ignoreCase = true)) {
+                    posViewModel.clearCart()
+                }
                 viewModel.resetProductResult()
             }
         }

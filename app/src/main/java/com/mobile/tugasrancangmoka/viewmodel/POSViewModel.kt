@@ -29,7 +29,13 @@ class POSViewModel(private val productRepo: ProductRepo) : ViewModel() {
             try {
                 val response = productRepo.getProducts(categoryId, search)
                 if (response.isSuccessful && response.body() != null) {
-                    _productState.value = ProductResult.Success(response.body().orEmpty())
+                    val rawProducts = response.body().orEmpty()
+                    val filteredProducts = rawProducts.filter { product ->
+                        val matchesCategory = categoryId == null || product.categoryId == categoryId
+                        val matchesSearch = search.isNullOrBlank() || product.name.contains(search, ignoreCase = true)
+                        matchesCategory && matchesSearch
+                    }.sortedBy { it.name.lowercase(java.util.Locale.ROOT) }
+                    _productState.value = ProductResult.Success(filteredProducts)
                 } else {
                     _productState.value = ProductResult.Error("Gagal memuat produk")
                 }

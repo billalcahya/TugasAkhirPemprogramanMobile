@@ -20,6 +20,7 @@ import com.mobile.tugasrancangmoka.model.UserListResponse
 import com.mobile.tugasrancangmoka.model.UserResponse
 import com.mobile.tugasrancangmoka.model.VoidRequest
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -59,8 +60,9 @@ interface ApiService {
 
     @GET("products")
     suspend fun getProducts(
-        @Query("category_id") categoryId: Int?,
-        @Query("search") search: String?
+        @Query("category_id") categoryId: Int? = null,
+        @Query("category") category: Int? = null,
+        @Query("search") search: String? = null
     ): Response<List<Product>>
 
     @POST("products")
@@ -69,6 +71,14 @@ interface ApiService {
     @Multipart
     @POST("products")
     suspend fun addProductMultipart(
+        @Part productData: MultipartBody.Part,
+        @Part productImage: MultipartBody.Part?
+    ): Response<SingleProductResponse>
+
+    @Multipart
+    @PUT("products/{id}")
+    suspend fun updateProductMultipart(
+        @Path("id") id: Int,
         @Part productData: MultipartBody.Part,
         @Part productImage: MultipartBody.Part?
     ): Response<SingleProductResponse>
@@ -94,11 +104,11 @@ interface ApiService {
         @Body request: CheckoutRequest
     ): Response<CheckoutResponse>
 
-    @PUT("inventory/{id}")
-    suspend fun updateStock(
-        @Path("id") id: Int,
-        @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
-    ): Response<SingleInventoryResponse>
+//    @PUT("inventory/{id}")
+//    suspend fun updateStock(
+//        @Path("id") id: Int,
+//        @Body request: com.mobile.tugasrancangmoka.model.UpdateStockRequest
+//    ): Response<SingleInventoryResponse>
 
     @GET("inventory")
     suspend fun getInventory(

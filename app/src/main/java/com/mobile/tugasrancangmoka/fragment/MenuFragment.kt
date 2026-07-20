@@ -200,9 +200,15 @@ class MenuFragment : Fragment() {
             formatter.maximumFractionDigits = 0
             holder.textPrice.text = "${formatter.format(item.sellPrice)} / ${item.unit ?: "Pcs"}"
 
-            if (!item.imageUrl.isNullOrEmpty()) {
+            val imageUrl = item.imageUrl
+            if (!imageUrl.isNullOrEmpty()) {
+                val fullUrl = when {
+                    imageUrl.startsWith("http://") || imageUrl.startsWith("https://") -> imageUrl
+                    imageUrl.startsWith("/") -> "https://pemprograman-mobile-be.vercel.app$imageUrl"
+                    else -> "https://pemprograman-mobile-be.vercel.app/$imageUrl"
+                }
                 Glide.with(holder.itemView.context)
-                    .load(item.imageUrl)
+                    .load(fullUrl)
                     .placeholder(R.drawable.ic_coffee)
                     .error(R.drawable.ic_coffee)
                     .into(holder.imgProduct)

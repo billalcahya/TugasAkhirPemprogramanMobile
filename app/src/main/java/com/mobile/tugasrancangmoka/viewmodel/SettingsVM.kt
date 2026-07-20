@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 data class UnitModel(
     val id: Int,
@@ -183,6 +184,14 @@ class SettingsVM(
                         android.util.Log.e("DEBUG_MOKA", "Error fetching inventory for products: ${e.message}")
                     }
 
+                    if (categoryId != null || !search.isNullOrBlank()) {
+                        productList = productList.filter { prod ->
+                            val matchesCategory = categoryId == null || prod.categoryId == categoryId
+                            val matchesSearch = search.isNullOrBlank() || prod.name.contains(search, ignoreCase = true)
+                            matchesCategory && matchesSearch
+                        }
+                    }
+
                     _products.postValue(productList)
 
                     var updated = false
@@ -206,42 +215,62 @@ class SettingsVM(
         }
     }
 
-    fun updateProduct(id: Int, product: Product) {
+    private suspend fun updateInventoryForProduct(id: Int, product: Product) {
+        val stockToUpdate = product.initialStock ?: product.stock ?: 0
+        val minStockToUpdate = product.minStock ?: 0
+        val unitToUpdate = product.unit ?: "pcs"
+
+        try {
+            val invResponse = productRepo.apiService.getInventory()
+            if (invResponse.isSuccessful && invResponse.body()?.data != null) {
+                val invItem = invResponse.body()!!.data.orEmpty()
+                    .firstOrNull { it.productId == id || it.id == id }
+
+                invItem?.let { item ->
+                    val requestPayload = com.mobile.tugasrancangmoka.model.UpdateInventoryRequest(
+                        currentStock = stockToUpdate,
+                        minStock = minStockToUpdate,
+                        unit = unitToUpdate
+                    )
+
+                    productRepo.apiService.updateStock(
+                        item.id,
+                        requestPayload
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("DEBUG_MOKA", "Error updating inventory stock: ${e.message}")
+        }
+    }
+
+    fun updateProduct(context: Context, id: Int, product: Product, imageUri: Uri?) {
         viewModelScope.launch {
             try {
-                val response = productRepo.updateProduct(id, product)
-                if (response.isSuccessful) {
-                    val stockToUpdate = product.initialStock ?: product.stock ?: 0
-                    val minStockToUpdate = product.minStock ?: 0
-                    val unitToUpdate = product.unit ?: "pcs"
-
-                    try {
-                        val invResponse = productRepo.apiService.getInventory()
-                        if (invResponse.isSuccessful && invResponse.body()?.data != null) {
-                            val invItem = invResponse.body()!!.data.orEmpty()
-                                .firstOrNull { it.productId == id || it.id == id }
-
-                            invItem?.let { item ->
-                                val requestPayload = com.mobile.tugasrancangmoka.model.UpdateInventoryRequest(
-                                    currentStock = stockToUpdate,
-                                    minStock = minStockToUpdate,
-                                    unit = unitToUpdate
-                                )
-
-                                // Kirim stok, min_stock, dan unit sekaligus
-                                productRepo.apiService.updateStock(
-                                    item.id,
-                                    requestPayload
-                                )
-                            }
-                        }
-                    } catch (e: Exception) {
-                        android.util.Log.e("DEBUG_MOKA", "Error updating inventory stock: ${e.message}")
+                val response = if (imageUri != null) {
+                    val file = UriToFileUtil.getFileFromUri(context, imageUri)
+                    if (file.length() > 2 * 1024 * 1024) { // 2 MB
+                        _productResult.postValue("Gagal: Ukuran gambar melebihi batas 2 MB!")
+                        return@launch
                     }
+                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    val imagePart = MultipartBody.Part.createFormData("product_image", file.name, requestFile)
+                    val productJson = Gson().toJson(product)
+                    val productPart = MultipartBody.Part.createFormData("product_data", productJson)
+
+                    productRepo.apiService.updateProductMultipart(id, productPart, imagePart)
+                } else {
+                    productRepo.updateProduct(id, product)
+                }
+
+                if (response.isSuccessful) {
+                    updateInventoryForProduct(id, product)
                     _productResult.postValue("Produk berhasil diperbarui!")
                     fetchProducts(null, null)
                 } else {
-                    _productResult.postValue("Gagal memperbarui: ${response.message()}")
+                    val errorString = response.errorBody()?.string()
+                    val errorMsg = com.mobile.tugasrancangmoka.utils.ErrorUtils.parseApiError(errorString).ifBlank { response.message() }
+                    _productResult.postValue("Gagal memperbarui: $errorMsg")
                 }
             } catch (e: Exception) {
                 _productResult.postValue(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e))
@@ -257,7 +286,9 @@ class SettingsVM(
                     _productResult.postValue("Produk berhasil dihapus!")
                     fetchProducts(null, null)
                 } else {
-                    _productResult.postValue("Gagal menghapus: ${response.message()}")
+                    val errorString = response.errorBody()?.string()
+                    val errorMsg = com.mobile.tugasrancangmoka.utils.ErrorUtils.parseApiError(errorString).ifBlank { response.message() }
+                    _productResult.postValue("Gagal menghapus: $errorMsg")
                 }
             } catch (e: Exception) {
                 _productResult.postValue(com.mobile.tugasrancangmoka.utils.ErrorUtils.getFriendlyMessage(e))

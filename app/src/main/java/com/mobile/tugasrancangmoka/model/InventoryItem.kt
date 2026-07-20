@@ -10,6 +10,7 @@ data class InventoryResponse(
 data class InventoryItem(
     val id: Int,
     @SerializedName("product_id") val productId: Int,
+
     @SerializedName("buy_price") val buyPrice: Double?,
     @SerializedName("sell_price") val sellPrice: Double?,
     @SerializedName("image_url") val imageUrl: String?,
